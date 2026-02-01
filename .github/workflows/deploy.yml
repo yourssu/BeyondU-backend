@@ -1,8 +1,9 @@
 name: Docker - Build and Deploy (BeyondU)
 
 on:
-  push:
-    branches: [ "main" ]
+#  push:
+#    branches: [ "main" ]
+# 수동 실행하도록 주석처리
   workflow_dispatch:
     inputs:
       tag:
