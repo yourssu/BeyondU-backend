@@ -12,10 +12,10 @@ import java.time.LocalDateTime
 @MappedSuperclass
 abstract class BaseEntity {
     @CreatedDate
-    @Column(name = "create_time", nullable = false, updatable = false)
-    lateinit var createdTime: LocalDateTime
+    @Column(name = "create_at", nullable = false, updatable = false)
+    lateinit var createdAt: LocalDateTime
 
     @LastModifiedDate
-    @Column(name = "update_time", nullable = false)
-    lateinit var updatedTime: LocalDateTime
+    @Column(name = "update_at", nullable = false)
+    lateinit var updatedAt: LocalDateTime
 }
