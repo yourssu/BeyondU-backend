@@ -15,6 +15,12 @@ import org.springframework.web.servlet.resource.NoResourceFoundException
 @RestControllerAdvice
 class ClientExceptionHandler {
 
+    // BusinessException 처리
+    @ExceptionHandler(BusinessException::class)
+    fun handleBusinessException(e: BusinessException): ResponseEntity<ApiResponse<Unit>> {
+        return ApiResponse.fail(e.errorCode, e.message)
+    }
+
     // @Valid 유효성 검사 실패
     @ExceptionHandler(MethodArgumentNotValidException::class)
     fun handleValidationException(e: MethodArgumentNotValidException): ResponseEntity<ApiResponse<Unit>> {
