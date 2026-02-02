@@ -7,7 +7,7 @@ class University(
     var nation: String,
     var nameKor: String,
     var nameEng: String,
-    var minGpa: Double,
+    var minGpa: Double = 0.0,
     var isExchange: Boolean,
     var isVisiting: Boolean,
     var availableMajors: String,
