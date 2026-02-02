@@ -12,7 +12,7 @@ class UniversityEntity(
     val id: Long? = null,
 
     @Column(nullable = false)
-    var serialNumber: String,
+    var semester: String,
 
     @Column(nullable = false)
     var region: String,
@@ -29,64 +29,68 @@ class UniversityEntity(
     @Column(name = "min_gpa", nullable = false)
     var minGpa: Double,
 
-    @Column(name = "is_exchange", nullable = false)
-    var isExchange: Boolean,
-
-    @Column(name = "is_visiting", nullable = false)
-    var isVisiting: Boolean,
-
-    @Column(columnDefinition = "TEXT", name = "available_majors", nullable = false)
-    var availableMajors: String,
+    @Column(name = "significant_note", columnDefinition = "TEXT", nullable = false)
+    var significantNote: String,
 
     @Column(columnDefinition = "TEXT", nullable = false)
-    var note: String,
+    var remark: String,
 
-    // TO DO: 기획 확정 후 null 여부 결정
-    @Column(name="thumbnail_url", nullable = true)
-    var thumbnailUrl: String? = null,
+    @Column(columnDefinition = "TEXT", name = "available_majors", nullable = true)
+    var availableMajors: String? = null,
 
     @Column(name="website_url", nullable = true)
     var websiteUrl: String? = null,
 
-    @Column(nullable = true)
+    @Column(name="thumbnail_url", nullable = true)
+    var thumbnailUrl: String? = null,
+
+    @Column(name="available_semester", nullable = true)
     var availableSemester: String? = null,
+
+    @Column(name = "is_exchange", nullable = false)
+    var isExchange: Boolean,
+
+    @Column(name = "is_visit", nullable = false)
+    var isVisit: Boolean,
 ) : BaseEntity() {
     companion object {
         fun from(university: University) = UniversityEntity(
 
             id = university.id,
-            serialNumber = university.serialNumber,
+            semester = university.semester,
             region = university.region,
             nation = university.nation,
             nameKor = university.nameKor,
             nameEng = university.nameEng,
             minGpa = university.minGpa,
-            isExchange = university.isExchange,
-            isVisiting = university.isVisiting,
+            significantNote = university.significantNote,
+            remark = university.remark,
             availableMajors = university.availableMajors,
-            note = university.note,
-            thumbnailUrl = university.thumbnailUrl,
             websiteUrl = university.websiteUrl,
+            thumbnailUrl = university.thumbnailUrl,
             availableSemester = university.availableSemester,
+            isExchange = university.isExchange,
+            isVisit = university.isVisit
         )
     }
 
     fun toDomain(): University {
         return University(
             id = id,
-            serialNumber = serialNumber,
+            semester = semester,
             region = region,
             nation = nation,
             nameKor = nameKor,
             nameEng = nameEng,
             minGpa = minGpa,
-            isExchange = isExchange,
-            isVisiting = isVisiting,
+            significantNote = significantNote,
+            remark = remark,
             availableMajors = availableMajors,
-            note = note,
-            thumbnailUrl = thumbnailUrl,
             websiteUrl = websiteUrl,
+            thumbnailUrl = thumbnailUrl,
             availableSemester = availableSemester,
+            isExchange = isExchange,
+            isVisit = isVisit
         )
     }
 }
