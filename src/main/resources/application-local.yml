@@ -1,0 +1,19 @@
+spring:
+  datasource:
+    url: ${DB_URL_LOCAL}
+    username: ${DB_USERNAME_LOCAL}
+    password: ${DB_PASSWORD_LOCAL}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        use_sql_comments: true
+
+logging:
+  level:
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE

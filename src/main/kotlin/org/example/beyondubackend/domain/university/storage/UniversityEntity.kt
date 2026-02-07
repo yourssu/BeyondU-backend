@@ -52,6 +52,15 @@ class UniversityEntity(
 
     @Column(name = "is_visit", nullable = false)
     var isVisit: Boolean,
+
+    @Column(name = "review_summary", columnDefinition = "TEXT", nullable = true)
+    var reviewSummary: String? = null,
+
+    @Column(nullable = true)
+    var rating: String? = null,
+
+    @Column(nullable = true)
+    var cost: Long? = null
 ) : BaseEntity() {
     companion object {
         fun from(university: University) = UniversityEntity(
@@ -70,7 +79,10 @@ class UniversityEntity(
             thumbnailUrl = university.thumbnailUrl,
             availableSemester = university.availableSemester,
             isExchange = university.isExchange,
-            isVisit = university.isVisit
+            isVisit = university.isVisit,
+            reviewSummary = university.reviewSummary,
+            rating = university.rating,
+            cost = university.cost
         )
     }
 
@@ -90,7 +102,10 @@ class UniversityEntity(
             thumbnailUrl = thumbnailUrl,
             availableSemester = availableSemester,
             isExchange = isExchange,
-            isVisit = isVisit
+            isVisit = isVisit,
+            reviewSummary = reviewSummary,
+            rating = rating,
+            cost = cost
         )
     }
 }
