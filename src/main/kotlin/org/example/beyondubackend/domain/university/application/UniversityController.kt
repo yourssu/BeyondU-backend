@@ -20,7 +20,7 @@ class UniversityController(
     fun getUniversities(
         @ModelAttribute request: UniversitySearchRequest,
         @RequestParam(defaultValue = "0") page: Int,
-        @RequestParam(defaultValue = "10") size: Int
+        @RequestParam(defaultValue = "12") size: Int
     ): ResponseEntity<ApiResponse<UniversityListResponse>> {
         val pageable = PageRequest.of(page, size, Sort.by("nameEng").ascending())
         val query = request.toQuery()
