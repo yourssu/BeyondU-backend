@@ -1,5 +1,6 @@
 package org.example.beyondubackend.domain.university.application
 
+import org.example.beyondubackend.common.annotation.ExamScoreParams
 import org.example.beyondubackend.common.dto.ApiResponse
 import org.example.beyondubackend.domain.university.application.dto.UniversitySearchRequest
 import org.example.beyondubackend.domain.university.business.UniversityService
@@ -19,11 +20,12 @@ class UniversityController(
     @GetMapping
     fun getUniversities(
         @ModelAttribute request: UniversitySearchRequest,
+        @ExamScoreParams examScores: Map<String, Double>,
         @RequestParam(defaultValue = "0") page: Int,
         @RequestParam(defaultValue = "12") size: Int
     ): ResponseEntity<ApiResponse<UniversityListResponse>> {
         val pageable = PageRequest.of(page, size, Sort.by("nameEng").ascending())
-        val query = request.toQuery()
+        val query = request.toQuery(examScores)
         val result = universityService.getUniversities(query, pageable)
         return ApiResponse.success(result)
     }

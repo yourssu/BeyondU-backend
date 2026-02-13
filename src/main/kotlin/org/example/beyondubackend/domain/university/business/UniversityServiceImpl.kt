@@ -1,6 +1,7 @@
 package org.example.beyondubackend.domain.university.business
 
 import org.example.beyondubackend.common.dto.PageInfo
+import org.example.beyondubackend.domain.languagerequirement.implement.LanguageRequirementReader
 import org.example.beyondubackend.domain.university.business.dto.LanguageRequirementResponse
 import org.example.beyondubackend.domain.university.business.dto.UniversityDetailResponse
 import org.example.beyondubackend.domain.university.business.dto.UniversityListResponse
@@ -13,7 +14,8 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 @Transactional(readOnly = true)
 class UniversityServiceImpl(
-    private val universityReader: UniversityReader
+    private val universityReader: UniversityReader,
+    private val languageRequirementReader: LanguageRequirementReader
 ) : UniversityService {
 
     override fun getUniversities(query: UniversityQuery, pageable: Pageable): UniversityListResponse {
@@ -22,10 +24,30 @@ class UniversityServiceImpl(
             isExchange = query.isExchange,
             isVisit = query.isVisit,
             search = query.search,
+            gpa = query.gpa,
+            nations = query.nations,
+            major = query.major,
+            hasReview = query.hasReview,
+            examScores = query.examScores,
             pageable = pageable
         )
 
-        val universities = universityPage.content.map { UniversityListResponse.UniversitySummaryDto.from(it) }
+        // 대학 ID 목록 추출
+        val universityIds = universityPage.content.map { it.id!! }
+
+        // 언어 요구사항 일괄 조회
+        val languageRequirementsMap = if (universityIds.isNotEmpty()) {
+            languageRequirementReader.findByUniversityIds(universityIds)
+        } else {
+            emptyMap()
+        }
+
+        // DTO 변환 (languageRequirementSummary 포함)
+        val universities = universityPage.content.map { university ->
+            val requirements = languageRequirementsMap[university.id] ?: emptyList()
+            val summary = languageRequirementReader.generateSummary(requirements)
+            UniversityListResponse.UniversitySummaryDto.from(university, summary)
+        }
 
         val pageInfo = PageInfo(
             currentPage = universityPage.number,
