@@ -1,7 +1,9 @@
 package org.example.beyondubackend.domain.university.storage
 
 import com.querydsl.core.types.dsl.BooleanExpression
+import com.querydsl.jpa.JPAExpressions
 import com.querydsl.jpa.impl.JPAQueryFactory
+import org.example.beyondubackend.domain.languagerequirement.storage.QLanguageRequirementEntity.languageRequirementEntity
 import org.example.beyondubackend.domain.university.implement.University
 import org.example.beyondubackend.domain.university.implement.UniversityRepository
 import org.example.beyondubackend.domain.university.storage.QUniversityEntity.universityEntity
@@ -21,6 +23,11 @@ class UniversityRepositoryImpl(
         isExchange: Boolean?,
         isVisit: Boolean?,
         search: String?,
+        gpa: Double?,
+        nations: String?,
+        major: String?,
+        hasReview: Boolean?,
+        examScores: Map<String, Double>,
         pageable: Pageable
     ): Page<University> {
 
@@ -30,7 +37,12 @@ class UniversityRepositoryImpl(
                 nationEq(nation),
                 isExchangeEq(isExchange),
                 isVisitEq(isVisit),
-                searchKeyword(search)
+                searchKeyword(search),
+                gpaLoe(gpa),
+                nationsIn(nations),
+                majorContains(major),
+                hasReviewEq(hasReview),
+                examScoresMatch(examScores)
             )
             .offset(pageable.offset)
             .limit(pageable.pageSize.toLong())
@@ -52,7 +64,12 @@ class UniversityRepositoryImpl(
                 nationEq(nation),
                 isExchangeEq(isExchange),
                 isVisitEq(isVisit),
-                searchKeyword(search)
+                searchKeyword(search),
+                gpaLoe(gpa),
+                nationsIn(nations),
+                majorContains(major),
+                hasReviewEq(hasReview),
+                examScoresMatch(examScores)
             )
             .fetchOne() ?: 0L
 
@@ -80,5 +97,42 @@ class UniversityRepositoryImpl(
             universityEntity.nameKor.contains(it)
                 .or(universityEntity.nameEng.contains(it))
         }
+    }
+
+    private fun gpaLoe(gpa: Double?): BooleanExpression? {
+        return gpa?.let { universityEntity.minGpa.loe(it) }
+    }
+
+    private fun nationsIn(nations: String?): BooleanExpression? {
+        return nations?.let {
+            val nationList = it.split(",").map { nation -> nation.trim() }
+            universityEntity.nation.`in`(nationList)
+        }
+    }
+
+    private fun majorContains(major: String?): BooleanExpression? {
+        return major?.let { universityEntity.availableMajors.contains(it) }
+    }
+
+    private fun hasReviewEq(hasReview: Boolean?): BooleanExpression? {
+        return hasReview?.let { universityEntity.hasReview.eq(it) }
+    }
+
+    private fun examScoresMatch(examScores: Map<String, Double>): BooleanExpression? {
+        if (examScores.isEmpty()) return null
+
+        val examConditions = examScores.map { (examType, score) ->
+            languageRequirementEntity.examType.eq(examType)
+                .and(languageRequirementEntity.minScore.loe(score))
+        }.reduce { acc, condition -> acc.or(condition) }
+
+        return JPAExpressions
+            .selectOne()
+            .from(languageRequirementEntity)
+            .where(
+                languageRequirementEntity.universityId.eq(universityEntity.id),
+                examConditions
+            )
+            .exists()
     }
 }

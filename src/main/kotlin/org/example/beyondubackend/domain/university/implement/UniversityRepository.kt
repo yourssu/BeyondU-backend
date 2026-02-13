@@ -9,6 +9,11 @@ interface UniversityRepository {
         isExchange: Boolean?,
         isVisit: Boolean?,
         search: String?,
+        gpa: Double?,
+        nations: String?,
+        major: String?,
+        hasReview: Boolean?,
+        examScores: Map<String, Double>,
         pageable: Pageable
     ): Page<University>
 
