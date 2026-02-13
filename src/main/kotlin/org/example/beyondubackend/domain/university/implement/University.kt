@@ -16,7 +16,8 @@ class University(
     var availableSemester: String? = null,
     var isExchange: Boolean,
     var isVisit: Boolean,
-    var reviewSummary: String? = null,
+    var badge: String? = null,
+    var hasReview: Boolean = false,
     var rating: String? = null,
     var cost: Long? = null
 )

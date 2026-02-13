@@ -53,8 +53,11 @@ class UniversityEntity(
     @Column(name = "is_visit", nullable = false)
     var isVisit: Boolean,
 
-    @Column(name = "review_summary", columnDefinition = "TEXT", nullable = true)
-    var reviewSummary: String? = null,
+    @Column(nullable = true)
+    var badge: String? = null,
+
+    @Column(name = "has_review", nullable = false)
+    var hasReview: Boolean = false,
 
     @Column(nullable = true)
     var rating: String? = null,
@@ -80,7 +83,8 @@ class UniversityEntity(
             availableSemester = university.availableSemester,
             isExchange = university.isExchange,
             isVisit = university.isVisit,
-            reviewSummary = university.reviewSummary,
+            badge = university.badge,
+            hasReview = university.hasReview,
             rating = university.rating,
             cost = university.cost
         )
@@ -103,7 +107,8 @@ class UniversityEntity(
             availableSemester = availableSemester,
             isExchange = isExchange,
             isVisit = isVisit,
-            reviewSummary = reviewSummary,
+            badge = badge,
+            hasReview = hasReview,
             rating = rating,
             cost = cost
         )
