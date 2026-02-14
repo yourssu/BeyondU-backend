@@ -122,8 +122,14 @@ class UniversityRepositoryImpl(
         if (examScores.isEmpty()) return null
 
         val examConditions = examScores.map { (examType, score) ->
-            languageRequirementEntity.examType.eq(examType)
-                .and(languageRequirementEntity.minScore.loe(score))
+            // JLPT는 숫자가 낮을수록 높은 레벨 (N1 > N2 > ... > N5)
+            val scoreCondition = if (examType == "JLPT") {
+                languageRequirementEntity.minScore.goe(score)
+            } else {
+                languageRequirementEntity.minScore.loe(score)
+            }
+
+            languageRequirementEntity.examType.eq(examType).and(scoreCondition)
         }.reduce { acc, condition -> acc.or(condition) }
 
         return JPAExpressions
