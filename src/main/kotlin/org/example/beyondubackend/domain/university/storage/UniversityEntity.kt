@@ -47,8 +47,8 @@ class UniversityEntity(
     @Column(name = "is_visit", nullable = false)
     var isVisit: Boolean,
 
-    @Column(nullable = true)
-    var badge: String? = null,
+    @Column(nullable = false)
+    var badge: String = "",
 
     @Column(name = "has_review", nullable = false)
     var hasReview: Boolean = false,

@@ -14,7 +14,7 @@ class University(
     var websiteUrl: String? = null,
     var isExchange: Boolean,
     var isVisit: Boolean,
-    var badge: String? = null,
+    var badge: String = "",
     var hasReview: Boolean = false,
     var reviewYear: String? = null
 )
