@@ -24,7 +24,7 @@ class UniversityController(
         @RequestParam(defaultValue = "0") page: Int,
         @RequestParam(defaultValue = "12") size: Int
     ): ResponseEntity<ApiResponse<UniversityListResponse>> {
-        val pageable = PageRequest.of(page, size, Sort.by("nameEng").ascending())
+        val pageable = PageRequest.of(page, size, Sort.by(Sort.Order.asc("nameEng"), Sort.Order.asc("nameKor")))
         val query = request.toQuery(examScores)
         val result = universityService.getUniversities(query, pageable)
         return ApiResponse.success(result)
