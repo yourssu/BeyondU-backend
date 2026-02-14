@@ -16,7 +16,7 @@ data class UniversityListResponse(
         val isExchange: Boolean,
         val isVisit: Boolean,
         val languageRequirementSummary: String?,
-        val hasReview: Boolean
+        val reviewStatus: String
     ) {
         val programType: String
             get() = when {
@@ -26,6 +26,15 @@ data class UniversityListResponse(
             }
         companion object {
             fun from(university: University, languageRequirementSummary: String?): UniversitySummaryDto {
+                val reviewStatus = when {
+                    university.hasReview && university.reviewYear != null ->
+                        "후기 있음 (${university.reviewYear})"
+                    university.hasReview ->
+                        "후기 있음"
+                    else ->
+                        "후기 없음"
+                }
+
                 return UniversitySummaryDto(
                     id = university.id!!,
                     nameKor = university.nameKor,
@@ -35,7 +44,7 @@ data class UniversityListResponse(
                     isExchange = university.isExchange,
                     isVisit = university.isVisit,
                     languageRequirementSummary = languageRequirementSummary,
-                    hasReview = university.hasReview
+                    reviewStatus = reviewStatus
                 )
             }
         }

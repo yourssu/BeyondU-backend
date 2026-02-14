@@ -41,12 +41,6 @@ class UniversityEntity(
     @Column(name="website_url", nullable = true)
     var websiteUrl: String? = null,
 
-    @Column(name="thumbnail_url", nullable = true)
-    var thumbnailUrl: String? = null,
-
-    @Column(name="available_semester", nullable = true)
-    var availableSemester: String? = null,
-
     @Column(name = "is_exchange", nullable = false)
     var isExchange: Boolean,
 
@@ -59,11 +53,9 @@ class UniversityEntity(
     @Column(name = "has_review", nullable = false)
     var hasReview: Boolean = false,
 
-    @Column(nullable = true)
-    var rating: String? = null,
+    @Column(name = "review_year", nullable = true)
+    var reviewYear: String? = null
 
-    @Column(nullable = true)
-    var cost: Long? = null
 ) : BaseEntity() {
     companion object {
         fun from(university: University) = UniversityEntity(
@@ -79,14 +71,11 @@ class UniversityEntity(
             remark = university.remark,
             availableMajors = university.availableMajors,
             websiteUrl = university.websiteUrl,
-            thumbnailUrl = university.thumbnailUrl,
-            availableSemester = university.availableSemester,
             isExchange = university.isExchange,
             isVisit = university.isVisit,
             badge = university.badge,
             hasReview = university.hasReview,
-            rating = university.rating,
-            cost = university.cost
+            reviewYear = university.reviewYear
         )
     }
 
@@ -103,14 +92,11 @@ class UniversityEntity(
             remark = remark,
             availableMajors = availableMajors,
             websiteUrl = websiteUrl,
-            thumbnailUrl = thumbnailUrl,
-            availableSemester = availableSemester,
             isExchange = isExchange,
             isVisit = isVisit,
             badge = badge,
             hasReview = hasReview,
-            rating = rating,
-            cost = cost
+            reviewYear = reviewYear
         )
     }
 }
