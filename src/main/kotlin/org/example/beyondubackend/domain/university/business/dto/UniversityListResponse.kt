@@ -12,28 +12,41 @@ data class UniversityListResponse(
         val nameKor: String,
         val nameEng: String,
         val nation: String,
-        val region: String,
-        val thumbnailUrl: String?,
+        val badge: String,
         val isExchange: Boolean,
         val isVisit: Boolean,
-        val availableSemester: String?,
-        val reviewSummary: String?,
-        val rating: String?
+        val programType: String,
+        val languageRequirementSummary: String?,
+        val reviewStatus: String
     ) {
         companion object {
-            fun from(university: University): UniversitySummaryDto {
+            fun from(university: University, languageRequirementSummary: String?): UniversitySummaryDto {
+                val reviewStatus = when {
+                    university.hasReview && university.reviewYear != null ->
+                        "후기 있음 (${university.reviewYear})"
+                    university.hasReview ->
+                        "후기 있음"
+                    else ->
+                        "후기 없음"
+                }
+
+                val programType = when {
+                    university.isExchange -> "일반교환"
+                    university.isVisit -> "방문교환"
+                    else -> ""
+                }
+
                 return UniversitySummaryDto(
                     id = university.id!!,
                     nameKor = university.nameKor,
                     nameEng = university.nameEng,
                     nation = university.nation,
-                    region = university.region,
-                    thumbnailUrl = university.thumbnailUrl,
+                    badge = university.badge,
                     isExchange = university.isExchange,
                     isVisit = university.isVisit,
-                    availableSemester = university.availableSemester,
-                    reviewSummary = university.reviewSummary,
-                    rating = university.rating
+                    programType = programType,
+                    languageRequirementSummary = languageRequirementSummary,
+                    reviewStatus = reviewStatus
                 )
             }
         }

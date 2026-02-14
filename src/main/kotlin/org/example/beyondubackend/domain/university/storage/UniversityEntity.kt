@@ -41,26 +41,21 @@ class UniversityEntity(
     @Column(name="website_url", nullable = true)
     var websiteUrl: String? = null,
 
-    @Column(name="thumbnail_url", nullable = true)
-    var thumbnailUrl: String? = null,
-
-    @Column(name="available_semester", nullable = true)
-    var availableSemester: String? = null,
-
     @Column(name = "is_exchange", nullable = false)
     var isExchange: Boolean,
 
     @Column(name = "is_visit", nullable = false)
     var isVisit: Boolean,
 
-    @Column(name = "review_summary", columnDefinition = "TEXT", nullable = true)
-    var reviewSummary: String? = null,
+    @Column(nullable = false)
+    var badge: String = "",
 
-    @Column(nullable = true)
-    var rating: String? = null,
+    @Column(name = "has_review", nullable = false)
+    var hasReview: Boolean = false,
 
-    @Column(nullable = true)
-    var cost: Long? = null
+    @Column(name = "review_year", nullable = true)
+    var reviewYear: String? = null
+
 ) : BaseEntity() {
     companion object {
         fun from(university: University) = UniversityEntity(
@@ -76,13 +71,11 @@ class UniversityEntity(
             remark = university.remark,
             availableMajors = university.availableMajors,
             websiteUrl = university.websiteUrl,
-            thumbnailUrl = university.thumbnailUrl,
-            availableSemester = university.availableSemester,
             isExchange = university.isExchange,
             isVisit = university.isVisit,
-            reviewSummary = university.reviewSummary,
-            rating = university.rating,
-            cost = university.cost
+            badge = university.badge,
+            hasReview = university.hasReview,
+            reviewYear = university.reviewYear
         )
     }
 
@@ -99,13 +92,11 @@ class UniversityEntity(
             remark = remark,
             availableMajors = availableMajors,
             websiteUrl = websiteUrl,
-            thumbnailUrl = thumbnailUrl,
-            availableSemester = availableSemester,
             isExchange = isExchange,
             isVisit = isVisit,
-            reviewSummary = reviewSummary,
-            rating = rating,
-            cost = cost
+            badge = badge,
+            hasReview = hasReview,
+            reviewYear = reviewYear
         )
     }
 }

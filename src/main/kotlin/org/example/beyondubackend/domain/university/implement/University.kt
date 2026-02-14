@@ -12,11 +12,9 @@ class University(
     var remark: String,
     var availableMajors: String? = null,
     var websiteUrl: String? = null,
-    var thumbnailUrl: String? = null,
-    var availableSemester: String? = null,
     var isExchange: Boolean,
     var isVisit: Boolean,
-    var reviewSummary: String? = null,
-    var rating: String? = null,
-    var cost: Long? = null
+    var badge: String = "",
+    var hasReview: Boolean = false,
+    var reviewYear: String? = null
 )

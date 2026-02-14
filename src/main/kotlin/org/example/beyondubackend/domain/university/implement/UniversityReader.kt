@@ -19,9 +19,16 @@ class UniversityReader(
         isExchange: Boolean?,
         isVisit: Boolean?,
         search: String?,
+        gpa: Double?,
+        nations: String?,
+        major: String?,
+        hasReview: Boolean?,
+        examScores: Map<String, Double>,
         pageable: Pageable
     ): Page<University> {
-        return universityRepository.findAllWithFilters(nation, isExchange, isVisit, search, pageable)
+        return universityRepository.findAllWithFilters(
+            nation, isExchange, isVisit, search, gpa, nations, major, hasReview, examScores, pageable
+        )
     }
 
     fun getUniversityById(id: Long): University {
@@ -30,7 +37,7 @@ class UniversityReader(
     }
 
     fun getLanguageRequirementsByUniversityId(universityId: Long): List<LanguageRequirement> {
-        return languageRequirementJpaRepository.findByUniversityId(universityId)
+        return languageRequirementJpaRepository.findByUniversityIdAndIsAvailableTrue(universityId)
             .map { it.toDomain() }
     }
 }
