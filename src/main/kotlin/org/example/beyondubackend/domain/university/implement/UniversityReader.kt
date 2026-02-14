@@ -37,7 +37,7 @@ class UniversityReader(
     }
 
     fun getLanguageRequirementsByUniversityId(universityId: Long): List<LanguageRequirement> {
-        return languageRequirementJpaRepository.findByUniversityId(universityId)
+        return languageRequirementJpaRepository.findByUniversityIdAndIsAvailableTrue(universityId)
             .map { it.toDomain() }
     }
 }

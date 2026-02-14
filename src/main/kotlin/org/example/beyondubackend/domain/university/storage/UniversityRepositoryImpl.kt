@@ -131,6 +131,7 @@ class UniversityRepositoryImpl(
             .from(languageRequirementEntity)
             .where(
                 languageRequirementEntity.universityId.eq(universityEntity.id),
+                languageRequirementEntity.isAvailable.eq(true),
                 examConditions
             )
             .exists()
