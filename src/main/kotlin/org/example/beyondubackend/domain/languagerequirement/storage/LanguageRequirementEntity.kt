@@ -1,7 +1,6 @@
 package org.example.beyondubackend.domain.languagerequirement.storage
 
 import jakarta.persistence.*
-import org.example.beyondubackend.common.entity.BaseEntity
 import org.example.beyondubackend.domain.languagerequirement.implement.LanguageRequirement
 
 @Entity
@@ -28,7 +27,7 @@ class LanguageRequirementEntity(
 
     @Column(name = "is_available", nullable = false)
     var isAvailable: Boolean = true
-) : BaseEntity() {
+) {
     companion object {
         fun from(languageRequirement: LanguageRequirement) =
             LanguageRequirementEntity(

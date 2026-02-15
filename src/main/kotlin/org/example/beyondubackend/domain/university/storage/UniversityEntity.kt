@@ -1,7 +1,6 @@
 package org.example.beyondubackend.domain.university.storage
 
 import jakarta.persistence.*
-import org.example.beyondubackend.common.entity.BaseEntity
 import org.example.beyondubackend.domain.university.implement.University
 
 @Entity
@@ -56,7 +55,7 @@ class UniversityEntity(
     @Column(name = "review_year", nullable = true)
     var reviewYear: String? = null
 
-) : BaseEntity() {
+) {
     companion object {
         fun from(university: University) = UniversityEntity(
 
