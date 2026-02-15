@@ -1,7 +1,6 @@
 package org.example.beyondubackend.domain.university.storage
 
 import jakarta.persistence.*
-import org.example.beyondubackend.common.entity.BaseEntity
 import org.example.beyondubackend.domain.university.implement.University
 
 @Entity
@@ -29,11 +28,11 @@ class UniversityEntity(
     @Column(name = "min_gpa", nullable = false)
     var minGpa: Double,
 
-    @Column(name = "significant_note", columnDefinition = "TEXT", nullable = false)
-    var significantNote: String,
+    @Column(name = "significant_note", columnDefinition = "TEXT", nullable = true)
+    var significantNote: String? = null,
 
-    @Column(columnDefinition = "TEXT", nullable = false)
-    var remark: String,
+    @Column(columnDefinition = "TEXT", nullable = true)
+    var remark: String? = null,
 
     @Column(columnDefinition = "TEXT", name = "available_majors", nullable = true)
     var availableMajors: String? = null,
@@ -56,7 +55,7 @@ class UniversityEntity(
     @Column(name = "review_year", nullable = true)
     var reviewYear: String? = null
 
-) : BaseEntity() {
+) {
     companion object {
         fun from(university: University) = UniversityEntity(
 
