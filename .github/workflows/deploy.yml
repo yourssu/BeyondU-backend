@@ -4,12 +4,12 @@ on:
 #  push:
 #    branches: [ "main" ]
 # 수동 실행하도록 주석처리
-  workflow_dispatch:
-    inputs:
-      tag:
-        description: 'Release tag to deploy'
-        required: true
-        default: 'latest'
+#  workflow_dispatch:
+#    inputs:
+#      tag:
+#        description: 'Release tag to deploy'
+#        required: true
+#        default: 'latest'
 
 jobs:
   build-push-deploy:
@@ -84,7 +84,15 @@ jobs:
           REGISTRY_ID: ${{ vars.ECR_PUBLIC_REGISTRY_ID }}
         run: |
           mkdir -p ~/.ssh
-          # 위 env 섹션에서 정의한 'HOST' 변수를 사용해야 함
+          LATEST_TAG=$(aws ecr-public describe-images \
+            --repository-name yourssu/$PROJECT_NAME \
+            --region us-east-1 \
+            --query 'sort_by(imageDetails, &imagePushedAt)[-1].imageTags[0]' \
+            --output text)
+          
+          echo "Found latest tag in ECR: $LATEST_TAG"
+
+          mkdir -p ~/.ssh
           ssh-keyscan -H $HOST >> ~/.ssh/known_hosts
           echo "$SSH_KEY" > key.pem
           chmod 600 key.pem
@@ -104,4 +112,4 @@ jobs:
           # 배포 스크립트 실행
           ssh -i key.pem ubuntu@$HOST "chmod +x /home/ubuntu/${PROJECT_NAME}-api/docker-deploy.sh"
           ssh -i key.pem ubuntu@$HOST "cd /home/ubuntu/${PROJECT_NAME}-api && \
-            PROJECT_NAME=$PROJECT_NAME IMAGE_TAG=${{ github.sha }} ./docker-deploy.sh"
+            PROJECT_NAME=$PROJECT_NAME IMAGE_TAG=$LATEST_TAG ./docker-deploy.sh"
