@@ -4,12 +4,12 @@ on:
 #  push:
 #    branches: [ "main" ]
 # 수동 실행하도록 주석처리
-#  workflow_dispatch:
-#    inputs:
-#      tag:
-#        description: 'Release tag to deploy'
-#        required: true
-#        default: 'latest'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'are you ready to deploy?'
+        required: true
+        default: 'yes'
 
 jobs:
   build-push-deploy:
@@ -57,7 +57,7 @@ jobs:
         env:
           ECR_REGISTRY: public.ecr.aws/${{ vars.ECR_PUBLIC_REGISTRY_ID }}
           PROJECT_NAME: ${{ vars.PROJECT_NAME }}
-          IMAGE_TAG: ${{ github.event.inputs.tag || github.sha }}
+          IMAGE_TAG: ${{ github.sha }}
         run: |
           docker buildx create --use --name beyondu-builder
           docker buildx build \
