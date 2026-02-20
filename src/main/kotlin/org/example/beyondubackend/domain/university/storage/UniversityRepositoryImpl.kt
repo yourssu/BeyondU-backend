@@ -132,7 +132,8 @@ class UniversityRepositoryImpl(
             languageRequirementEntity.examType.eq(examType).and(scoreCondition)
         }.reduce { acc, condition -> acc.or(condition) }
 
-        return JPAExpressions
+        // 조건을 만족하는 language_requirement가 존재하는 경우
+        val hasMatchingRequirement = JPAExpressions
             .selectOne()
             .from(languageRequirementEntity)
             .where(
@@ -141,5 +142,17 @@ class UniversityRepositoryImpl(
                 examConditions
             )
             .exists()
+
+        // language_requirement 자체가 없는 경우 (어학 요구사항 없음)
+        val hasNoRequirement = JPAExpressions
+            .selectOne()
+            .from(languageRequirementEntity)
+            .where(
+                languageRequirementEntity.universityId.eq(universityEntity.id)
+            )
+            .notExists()
+
+        // 둘 중 하나라도 true면 조회 가능
+        return hasMatchingRequirement.or(hasNoRequirement)
     }
 }
