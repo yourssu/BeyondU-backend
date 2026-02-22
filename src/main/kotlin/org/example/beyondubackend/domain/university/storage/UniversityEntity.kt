@@ -53,7 +53,10 @@ class UniversityEntity(
     var hasReview: Boolean = false,
 
     @Column(name = "review_year", nullable = true)
-    var reviewYear: String? = null
+    var reviewYear: String? = null,
+
+    @Column(name = "language_score", columnDefinition = "TEXT", nullable = true)
+    var languageScore: String? = null
 
 ) {
     companion object {
@@ -74,7 +77,8 @@ class UniversityEntity(
             isVisit = university.isVisit,
             badge = university.badge,
             hasReview = university.hasReview,
-            reviewYear = university.reviewYear
+            reviewYear = university.reviewYear,
+            languageScore = university.languageScore
         )
     }
 
@@ -95,7 +99,8 @@ class UniversityEntity(
             isVisit = isVisit,
             badge = badge,
             hasReview = hasReview,
-            reviewYear = reviewYear
+            reviewYear = reviewYear,
+            languageScore = languageScore
         )
     }
 }

@@ -16,5 +16,6 @@ class University(
     var isVisit: Boolean,
     var badge: String = "",
     var hasReview: Boolean = false,
-    var reviewYear: String? = null
+    var reviewYear: String? = null,
+    var languageScore: String? = null
 )
