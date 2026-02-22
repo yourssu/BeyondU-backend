@@ -28,7 +28,7 @@ class ExamScoreArgumentResolver : HandlerMethodArgumentResolver {
             "JLPT" to "JLPT",
             "JPT" to "JPT",
             "DELF" to "DELF",
-            "TestDaF" to "TestDaF"
+            "ZD" to "ZD"
         )
     }
 
