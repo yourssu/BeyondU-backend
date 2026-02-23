@@ -17,4 +17,4 @@ COPY build/libs/*-SNAPSHOT.jar app.jar
 
 EXPOSE 9013
 
-ENTRYPOINT ["/bin/bash", "/app/start.sh"]
+ENTRYPOINT ["/app/start.sh"]
