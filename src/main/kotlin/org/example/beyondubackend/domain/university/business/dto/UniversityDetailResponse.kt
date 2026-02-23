@@ -10,6 +10,7 @@ data class UniversityDetailResponse(
     val region: String,
     val isExchange: Boolean,
     val isVisit: Boolean,
+    val programType: String,
     val badge: String,
     val hasReview: Boolean,
     val minGpa: Double,
@@ -26,6 +27,12 @@ data class UniversityDetailResponse(
             university: University,
             languageRequirements: List<LanguageRequirementResponse>
         ): UniversityDetailResponse {
+            val programType = when {
+                university.isExchange -> "일반교환"
+                university.isVisit -> "방문교환"
+                else -> ""
+            }
+
             return UniversityDetailResponse(
                 id = university.id!!,
                 nameKor = university.nameKor,
@@ -34,6 +41,7 @@ data class UniversityDetailResponse(
                 region = university.region,
                 isExchange = university.isExchange,
                 isVisit = university.isVisit,
+                programType = programType,
                 badge = university.badge,
                 hasReview = university.hasReview,
                 minGpa = university.minGpa,
