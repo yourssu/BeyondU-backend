@@ -100,7 +100,7 @@ jobs:
           # .env 파일 생성
           echo "SERVER_PORT=$SERVER_PORT" > .env
           echo "PROJECT_NAME=$PROJECT_NAME" >> .env
-          echo "DB_URL=$DB_URL" >> .env
+          echo "DB_HOST=$DB_URL" >> .env
           echo "DB_USERNAME=$DB_USERNAME" >> .env
           echo "DB_PASSWORD=$DB_PASSWORD" >> .env
           echo "ECR_REGISTRY=public.ecr.aws/$REGISTRY_ID" >> .env
