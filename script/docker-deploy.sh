@@ -39,13 +39,14 @@ if [ "$(docker ps -aq -f name=$CONTAINER_NAME)" ]; then
     docker rm $CONTAINER_NAME
 fi
 
-# 5. 새 컨테이너 실행 (9013:9013 매핑 보장)
-# 호스트 포트($SERVER_PORT=9013) : 컨테이너 포트(9013)
-echo "Starting new container on port $SERVER_PORT..."docker run -d \
+# 5. 새 컨테이너 실행 (echo와 docker run 사이를 확실히 분리)
+echo "🚀 Starting new container on port $SERVER_PORT..."
+
+docker run -d \
   --name $CONTAINER_NAME \
   --restart unless-stopped \
   -p $SERVER_PORT:9013 \
-  -v $(pwd)/logs:/app/logs \
+  -v /home/ubuntu/beyondu-api/logs:/app/logs \
   --env-file .env \
   -e SPRING_PROFILES_ACTIVE=prod \
   $IMAGE_NAME
