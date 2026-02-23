@@ -112,4 +112,7 @@ jobs:
           # 배포 스크립트 실행
           ssh -i key.pem ubuntu@$HOST "chmod +x /home/ubuntu/${PROJECT_NAME}-api/docker-deploy.sh"
           ssh -i key.pem ubuntu@$HOST "cd /home/ubuntu/${PROJECT_NAME}-api && \
-            PROJECT_NAME=$PROJECT_NAME IMAGE_TAG=$LATEST_TAG ./docker-deploy.sh"
+            PROJECT_NAME=$PROJECT_NAME \
+            IMAGE_TAG=$LATEST_TAG \
+            SPRING_PROFILES_ACTIVE=prod \
+            ./docker-deploy.sh"
