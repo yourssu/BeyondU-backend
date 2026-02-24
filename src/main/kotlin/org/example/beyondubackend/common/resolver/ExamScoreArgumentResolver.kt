@@ -1,6 +1,9 @@
 package org.example.beyondubackend.common.resolver
 
 import org.example.beyondubackend.common.annotation.ExamScoreParams
+import org.example.beyondubackend.common.code.ErrorCode
+import org.example.beyondubackend.common.exception.BusinessException
+import org.example.beyondubackend.domain.languagerequirement.implement.ExamType
 import org.springframework.core.MethodParameter
 import org.springframework.web.bind.support.WebDataBinderFactory
 import org.springframework.web.context.request.NativeWebRequest
@@ -13,25 +16,6 @@ import org.springframework.web.method.support.ModelAndViewContainer
  */
 class ExamScoreArgumentResolver : HandlerMethodArgumentResolver {
 
-    companion object {
-        /**
-         * 지원하는 어학 시험 목록
-         * 새로운 시험 추가 시 이 목록에만 추가하면 됨
-         */
-        private val SUPPORTED_EXAMS = mapOf(
-            "TOEFL_IBT" to "TOEFL iBT",
-            "TOEFL_ITP" to "TOEFL ITP",
-            "IELTS" to "IELTS",
-            "TOEIC" to "TOEIC",
-            "TOEIC_Speaking" to "TOEIC Speaking",
-            "HSK" to "HSK",
-            "JLPT" to "JLPT",
-            "JPT" to "JPT",
-            "DELF" to "DELF",
-            "ZD" to "ZD"
-        )
-    }
-
     override fun supportsParameter(parameter: MethodParameter): Boolean {
         return parameter.hasParameterAnnotation(ExamScoreParams::class.java)
     }
@@ -42,9 +26,17 @@ class ExamScoreArgumentResolver : HandlerMethodArgumentResolver {
         webRequest: NativeWebRequest,
         binderFactory: WebDataBinderFactory?
     ): Map<String, Double> {
-        return SUPPORTED_EXAMS.mapNotNull { (paramName, displayName) ->
-            val value = webRequest.getParameter(paramName)?.toDoubleOrNull()
-            if (value != null) displayName to value else null
+        return ExamType.entries.mapNotNull { examType ->
+            val value = webRequest.getParameter(examType.paramName)?.toDoubleOrNull()
+            if (value != null) {
+                if (value < examType.minScore || value > examType.maxScore) {
+                    throw BusinessException(
+                        ErrorCode.INVALID_EXAM_SCORE,
+                        "${examType.displayName} 점수는 ${examType.minScore} ~ ${examType.maxScore} 범위여야 합니다."
+                    )
+                }
+                examType.displayName to value
+            } else null
         }.toMap()
     }
 }
