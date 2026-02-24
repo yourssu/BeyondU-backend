@@ -15,5 +15,8 @@ enum class ErrorCode(val code: String, val httpStatus: HttpStatus, val message: 
     DATABASE_ERROR("S503_001", HttpStatus.SERVICE_UNAVAILABLE, "데이터베이스 통신 오류가 발생했습니다."),
 
     // UNIVERSITY
-    UNIVERSITY_NOT_FOUND("U404_001", HttpStatus.NOT_FOUND, "대학교를 찾을 수 없습니다.")
+    UNIVERSITY_NOT_FOUND("U404_001", HttpStatus.NOT_FOUND, "대학교를 찾을 수 없습니다."),
+
+    // LANGUAGE REQUIREMENT
+    INVALID_EXAM_SCORE("L400_001", HttpStatus.BAD_REQUEST, "어학 점수가 유효 범위를 벗어났습니다.")
 }

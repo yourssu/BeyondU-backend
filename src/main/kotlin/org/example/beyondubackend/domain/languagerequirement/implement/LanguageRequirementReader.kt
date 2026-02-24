@@ -1,5 +1,6 @@
 package org.example.beyondubackend.domain.languagerequirement.implement
 
+import org.example.beyondubackend.common.enums.ExamType
 import org.springframework.stereotype.Component
 
 @Component
@@ -20,11 +21,11 @@ class LanguageRequirementReader(
 
         return requirements.joinToString(" / ") { requirement ->
             when {
-                requirement.examType.equals("HSK", ignoreCase = true) && requirement.levelCode != null -> {
-                    "HSK ${requirement.levelCode}"
+                requirement.examType.equals(ExamType.HSK.displayName, ignoreCase = true) && requirement.levelCode != null -> {
+                    "${ExamType.HSK.displayName} ${requirement.levelCode}"
                 }
-                requirement.examType.equals("HSK", ignoreCase = true) -> {
-                    "HSK ${requirement.minScore.toInt()}"
+                requirement.examType.equals(ExamType.HSK.displayName, ignoreCase = true) -> {
+                    "${ExamType.HSK.displayName} ${requirement.minScore.toInt()}"
                 }
                 else -> {
                     "${requirement.examType} ${formatScore(requirement.minScore)}"
