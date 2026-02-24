@@ -3,6 +3,7 @@ package org.example.beyondubackend.domain.university.storage
 import com.querydsl.core.types.dsl.BooleanExpression
 import com.querydsl.jpa.JPAExpressions
 import com.querydsl.jpa.impl.JPAQueryFactory
+import org.example.beyondubackend.domain.languagerequirement.implement.ExamType
 import org.example.beyondubackend.domain.languagerequirement.storage.QLanguageRequirementEntity.languageRequirementEntity
 import org.example.beyondubackend.domain.university.implement.University
 import org.example.beyondubackend.domain.university.implement.UniversityRepository
@@ -120,7 +121,7 @@ class UniversityRepositoryImpl(
 
         val examConditions = examScores.map { (examType, score) ->
             // JLPT는 숫자가 낮을수록 높은 레벨 (N1 > N2 > ... > N5)
-            val scoreCondition = if (examType == "JLPT") {
+            val scoreCondition = if (examType == ExamType.JLPT.displayName) {
                 languageRequirementEntity.minScore.goe(score)
             } else {
                 languageRequirementEntity.minScore.loe(score)
