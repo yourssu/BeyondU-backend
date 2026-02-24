@@ -25,7 +25,6 @@ class UniversityServiceImpl(
             isVisit = query.isVisit,
             search = query.search,
             gpa = query.gpa,
-            nations = query.nations,
             major = query.major,
             hasReview = query.hasReview,
             examScores = query.examScores,

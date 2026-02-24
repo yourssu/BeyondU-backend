@@ -20,14 +20,13 @@ class UniversityReader(
         isVisit: Boolean?,
         search: String?,
         gpa: Double?,
-        nations: String?,
         major: String?,
         hasReview: Boolean?,
         examScores: Map<String, Double>,
         pageable: Pageable
     ): Page<University> {
         return universityRepository.findAllWithFilters(
-            nation, isExchange, isVisit, search, gpa, nations, major, hasReview, examScores, pageable
+            nation, isExchange, isVisit, search, gpa, major, hasReview, examScores, pageable
         )
     }
 

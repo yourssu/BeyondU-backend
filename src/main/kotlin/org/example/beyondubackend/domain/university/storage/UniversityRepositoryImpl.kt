@@ -24,7 +24,6 @@ class UniversityRepositoryImpl(
         isVisit: Boolean?,
         search: String?,
         gpa: Double?,
-        nations: String?,
         major: String?,
         hasReview: Boolean?,
         examScores: Map<String, Double>,
@@ -39,7 +38,6 @@ class UniversityRepositoryImpl(
                 isVisitEq(isVisit),
                 searchKeyword(search),
                 gpaLoe(gpa),
-                nationsIn(nations),
                 majorContains(major),
                 hasReviewEq(hasReview),
                 examScoresMatch(examScores)
@@ -66,7 +64,6 @@ class UniversityRepositoryImpl(
                 isVisitEq(isVisit),
                 searchKeyword(search),
                 gpaLoe(gpa),
-                nationsIn(nations),
                 majorContains(major),
                 hasReviewEq(hasReview),
                 examScoresMatch(examScores)

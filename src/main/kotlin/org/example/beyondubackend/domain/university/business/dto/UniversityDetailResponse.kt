@@ -10,6 +10,7 @@ data class UniversityDetailResponse(
     val region: String,
     val isExchange: Boolean,
     val isVisit: Boolean,
+    val programType: String,
     val badge: String,
     val hasReview: Boolean,
     val minGpa: Double,
@@ -20,12 +21,19 @@ data class UniversityDetailResponse(
     val availableMajors: List<String>?,
     val courseListUrl: String?,
     val studentCount: String?,
+    val location: String?,
 ) {
     companion object {
         fun from(
             university: University,
             languageRequirements: List<LanguageRequirementResponse>
         ): UniversityDetailResponse {
+            val programType = when {
+                university.isExchange -> "일반교환"
+                university.isVisit -> "방문교환"
+                else -> ""
+            }
+
             return UniversityDetailResponse(
                 id = university.id!!,
                 nameKor = university.nameKor,
@@ -34,6 +42,7 @@ data class UniversityDetailResponse(
                 region = university.region,
                 isExchange = university.isExchange,
                 isVisit = university.isVisit,
+                programType = programType,
                 badge = university.badge,
                 hasReview = university.hasReview,
                 minGpa = university.minGpa,
@@ -44,6 +53,7 @@ data class UniversityDetailResponse(
                 availableMajors = parseAvailableMajors(university.availableMajors),
                 courseListUrl = parseCourseListUrl(university.availableMajors),
                 studentCount = parseStudentCount(university.remark),
+                location = parseLocation(university.remark),
             )
         }
 
@@ -75,6 +85,18 @@ data class UniversityDetailResponse(
         }
 
         /**
+         * remark에서 위치 파싱
+         * 예: "* 위치: Vechta\n* 특징: ..." -> "Vechta"
+         * 예: "* 위치: Brühl (쾰른에서 기차로 10분) * 특징: ..." -> "Brühl (쾰른에서 기차로 10분)"
+         * 없으면 null 반환
+         */
+        private fun parseLocation(remark: String?): String? {
+            if (remark == null) return null
+            val regex = """\*\s*위치\s*:\s*([^*\n]+)""".toRegex()
+            return regex.find(remark)?.groupValues?.get(1)?.trim()?.takeIf { it.isNotBlank() }
+        }
+
+        /**
          * remark에서 학생 수 파싱
          * 예: "... 학생 수 약 28,600명 ..." -> "약 28,600명"
          * 없으면 "학생 수 정보 없음" 반환
@@ -83,7 +105,7 @@ data class UniversityDetailResponse(
             if (remark == null) return "학생 수 정보 없음"
             val regex = """학생\s*수\s*약?\s*([\d,]+)\s*명""".toRegex()
             val count = regex.find(remark)?.groupValues?.get(1)?.trim()
-            return if (count != null) "약 ${count} 명" else "학생 수 정보 없음"
+            return if (count != null) "약 $count 명" else "학생 수 정보 없음"
         }
     }
 }
