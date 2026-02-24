@@ -1,4 +1,4 @@
-package org.example.beyondubackend.domain.university.implement
+package org.example.beyondubackend.common.enums
 
 enum class Nation(val displayName: String) {
     GUATEMALA("과테말라"),

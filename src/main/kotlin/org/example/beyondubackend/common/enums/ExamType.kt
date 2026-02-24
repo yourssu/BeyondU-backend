@@ -1,4 +1,4 @@
-package org.example.beyondubackend.domain.languagerequirement.implement
+package org.example.beyondubackend.common.enums
 
 enum class ExamType(
     val paramName: String,
