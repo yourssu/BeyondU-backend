@@ -2,8 +2,8 @@ package org.example.beyondubackend.common.resolver
 
 import org.example.beyondubackend.common.annotation.ExamScoreParams
 import org.example.beyondubackend.common.code.ErrorCode
+import org.example.beyondubackend.common.enums.ExamType
 import org.example.beyondubackend.common.exception.BusinessException
-import org.example.beyondubackend.domain.languagerequirement.implement.ExamType
 import org.springframework.core.MethodParameter
 import org.springframework.web.bind.support.WebDataBinderFactory
 import org.springframework.web.context.request.NativeWebRequest

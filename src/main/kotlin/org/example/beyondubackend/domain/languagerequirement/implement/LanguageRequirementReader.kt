@@ -1,5 +1,6 @@
 package org.example.beyondubackend.domain.languagerequirement.implement
 
+import org.example.beyondubackend.common.enums.ExamType
 import org.springframework.stereotype.Component
 
 @Component
