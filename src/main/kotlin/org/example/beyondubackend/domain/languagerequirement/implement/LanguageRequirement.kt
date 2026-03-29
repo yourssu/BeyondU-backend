@@ -6,6 +6,5 @@ class LanguageRequirement(
     var languageGroup: String,
     var examType: String,
     var minScore: Double,
-    var levelCode: String? = null,
-    var isAvailable: Boolean = true
+    var levelCode: String? = null
 )
