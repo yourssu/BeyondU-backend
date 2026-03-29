@@ -9,13 +9,15 @@ class University(
     var nameEng: String,
     var minGpa: Double,
     var significantNote: String? = null,
-    var remark: String? = null,
-    var availableMajors: String? = null,
+    var remark: String,
+    var location: String? = null,
+    var studentCount: String? = null,
+    var availableMajor: String? = null,
+    var availableSubject: String? = null,
     var websiteUrl: String? = null,
     var isExchange: Boolean,
     var isVisit: Boolean,
     var badge: String = "",
     var hasReview: Boolean = false,
-    var reviewYear: String? = null,
-    var languageScore: String? = null
+    var reviewYear: String? = null
 )
