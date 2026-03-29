@@ -60,7 +60,7 @@ class UniversityServiceImpl(
 
     override fun getUniversityDetail(id: Long): UniversityDetailResponse {
         val university = universityReader.getUniversityById(id)
-        val languageRequirements = universityReader.getLanguageRequirementsByUniversityId(id)
+        val languageRequirements = languageRequirementReader.findByUniversityId(id)
             .map { LanguageRequirementResponse.from(it) }
 
         return UniversityDetailResponse.from(university, languageRequirements)

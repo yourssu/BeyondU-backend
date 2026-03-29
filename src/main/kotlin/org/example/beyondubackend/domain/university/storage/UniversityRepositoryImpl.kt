@@ -109,7 +109,7 @@ class UniversityRepositoryImpl(
     }
 
     private fun majorContains(major: String?): BooleanExpression? {
-        return major?.let { universityEntity.availableMajors.contains(it) }
+        return major?.let { universityEntity.availableMajor.contains(it) }
     }
 
     private fun hasReviewEq(hasReview: Boolean?): BooleanExpression? {
@@ -136,7 +136,6 @@ class UniversityRepositoryImpl(
             .from(languageRequirementEntity)
             .where(
                 languageRequirementEntity.universityId.eq(universityEntity.id),
-                languageRequirementEntity.isAvailable.eq(true),
                 examConditions
             )
             .exists()
