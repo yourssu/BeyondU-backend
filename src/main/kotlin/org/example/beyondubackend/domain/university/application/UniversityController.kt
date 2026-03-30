@@ -9,21 +9,16 @@ import io.swagger.v3.oas.annotations.tags.Tag
 import org.example.beyondubackend.common.annotation.ExamScoreParams
 import org.example.beyondubackend.common.dto.ApiResponse
 import org.example.beyondubackend.domain.university.application.dto.UniversitySearchRequest
-import org.example.beyondubackend.domain.university.business.UniversityService
 import org.example.beyondubackend.domain.university.business.dto.UniversityDetailResponse
 import org.example.beyondubackend.domain.university.business.dto.UniversityListResponse
 import org.springdoc.core.annotations.ParameterObject
-import org.springframework.data.domain.PageRequest
-import org.springframework.data.domain.Sort
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.ModelAttribute
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.RequestParam
 
 @Tag(name = "University", description = "대학교 조회 API")
-@RestController
-@RequestMapping("/api/v1/universities")
-class UniversityController(
-    private val universityService: UniversityService
-) {
+interface UniversityController {
 
     @Operation(
         summary = "대학교 목록 조회",
@@ -77,7 +72,6 @@ class UniversityController(
             required = false, `in` = ParameterIn.QUERY, schema = Schema(type = "number", example = "4")
         )
     ])
-    @GetMapping
     fun getUniversities(
         @ParameterObject @ModelAttribute request: UniversitySearchRequest,
         @Parameter(hidden = true) @ExamScoreParams examScores: Map<String, Double>,
@@ -85,23 +79,14 @@ class UniversityController(
         @RequestParam(defaultValue = "0") page: Int,
         @Parameter(description = "페이지 크기", example = "12")
         @RequestParam(defaultValue = "12") size: Int
-    ): ResponseEntity<ApiResponse<UniversityListResponse>> {
-        val pageable = PageRequest.of(page, size, Sort.by(Sort.Order.asc("nameEng"), Sort.Order.asc("nameKor")))
-        val query = request.toQuery(examScores)
-        val result = universityService.getUniversities(query, pageable)
-        return ApiResponse.success(result)
-    }
+    ): ResponseEntity<ApiResponse<UniversityListResponse>>
 
     @Operation(
         summary = "대학교 상세 조회",
         description = "대학교 ID로 상세 정보를 조회합니다. 언어 요구사항 정보도 함께 반환됩니다."
     )
-    @GetMapping("/{id}")
     fun getUniversityDetail(
         @Parameter(description = "대학교 ID", example = "1", required = true)
         @PathVariable id: Long
-    ): ResponseEntity<ApiResponse<UniversityDetailResponse>> {
-        val result = universityService.getUniversityDetail(id)
-        return ApiResponse.success(result)
-    }
+    ): ResponseEntity<ApiResponse<UniversityDetailResponse>>
 }

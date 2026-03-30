@@ -10,15 +10,14 @@ class LanguageRequirementRepositoryImpl(
 ) : LanguageRequirementRepository {
 
     override fun findByUniversityId(universityId: Long): List<LanguageRequirement> {
-        return languageRequirementJpaRepository.findByUniversityIdAndIsAvailableTrue(universityId)
+        return languageRequirementJpaRepository.findByUniversityId(universityId)
             .map { it.toDomain() }
     }
 
     override fun findByUniversityIds(universityIds: List<Long>): Map<Long, List<LanguageRequirement>> {
         if (universityIds.isEmpty()) return emptyMap()
 
-        return languageRequirementJpaRepository.findByIsAvailableTrue()
-            .filter { it.universityId in universityIds }
+        return languageRequirementJpaRepository.findByUniversityIdIn(universityIds)
             .groupBy { it.universityId }
             .mapValues { entry -> entry.value.map { it.toDomain() } }
     }

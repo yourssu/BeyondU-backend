@@ -1,6 +1,7 @@
 package org.example.beyondubackend.domain.university.storage
 
 import jakarta.persistence.*
+import org.example.beyondubackend.common.entity.BaseEntity
 import org.example.beyondubackend.domain.university.implement.University
 
 @Entity
@@ -31,13 +32,22 @@ class UniversityEntity(
     @Column(name = "significant_note", columnDefinition = "TEXT", nullable = true)
     var significantNote: String? = null,
 
-    @Column(columnDefinition = "TEXT", nullable = true)
-    var remark: String? = null,
+    @Column(columnDefinition = "TEXT", nullable = false)
+    var remark: String,
 
-    @Column(columnDefinition = "TEXT", name = "available_majors", nullable = true)
-    var availableMajors: String? = null,
+    @Column(name = "location", nullable = true)
+    var location: String? = null,
 
-    @Column(name="website_url", nullable = true)
+    @Column(name = "student_count", nullable = true)
+    var studentCount: String? = null,
+
+    @Column(columnDefinition = "TEXT", name = "available_major", nullable = true)
+    var availableMajor: String? = null,
+
+    @Column(columnDefinition = "TEXT", name = "available_subject", nullable = true)
+    var availableSubject: String? = null,
+
+    @Column(name = "website_url", columnDefinition = "TEXT", nullable = true)
     var websiteUrl: String? = null,
 
     @Column(name = "is_exchange", nullable = false)
@@ -46,22 +56,18 @@ class UniversityEntity(
     @Column(name = "is_visit", nullable = false)
     var isVisit: Boolean,
 
-    @Column(nullable = false)
-    var badge: String = "",
+    @Column(nullable = true)
+    var badge: String? = null,
 
     @Column(name = "has_review", nullable = false)
     var hasReview: Boolean = false,
 
     @Column(name = "review_year", nullable = true)
-    var reviewYear: String? = null,
+    var reviewYear: String? = null
 
-    @Column(name = "language_score", columnDefinition = "TEXT", nullable = true)
-    var languageScore: String? = null
-
-) {
+) : BaseEntity() {
     companion object {
         fun from(university: University) = UniversityEntity(
-
             id = university.id,
             semester = university.semester,
             region = university.region,
@@ -71,14 +77,16 @@ class UniversityEntity(
             minGpa = university.minGpa,
             significantNote = university.significantNote,
             remark = university.remark,
-            availableMajors = university.availableMajors,
+            location = university.location,
+            studentCount = university.studentCount,
+            availableMajor = university.availableMajor,
+            availableSubject = university.availableSubject,
             websiteUrl = university.websiteUrl,
             isExchange = university.isExchange,
             isVisit = university.isVisit,
             badge = university.badge,
             hasReview = university.hasReview,
-            reviewYear = university.reviewYear,
-            languageScore = university.languageScore
+            reviewYear = university.reviewYear
         )
     }
 
@@ -93,14 +101,16 @@ class UniversityEntity(
             minGpa = minGpa,
             significantNote = significantNote,
             remark = remark,
-            availableMajors = availableMajors,
+            location = location,
+            studentCount = studentCount,
+            availableMajor = availableMajor,
+            availableSubject = availableSubject,
             websiteUrl = websiteUrl,
             isExchange = isExchange,
             isVisit = isVisit,
-            badge = badge,
+            badge = badge ?: "",
             hasReview = hasReview,
-            reviewYear = reviewYear,
-            languageScore = languageScore
+            reviewYear = reviewYear
         )
     }
 }

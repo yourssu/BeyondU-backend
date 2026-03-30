@@ -1,0 +1,41 @@
+package org.example.beyondubackend.domain.university.application
+
+import org.example.beyondubackend.common.annotation.ExamScoreParams
+import org.example.beyondubackend.common.dto.ApiResponse
+import org.example.beyondubackend.domain.university.application.dto.UniversitySearchRequest
+import org.example.beyondubackend.domain.university.business.UniversityService
+import org.example.beyondubackend.domain.university.business.dto.UniversityDetailResponse
+import org.example.beyondubackend.domain.university.business.dto.UniversityListResponse
+import org.springdoc.core.annotations.ParameterObject
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Sort
+import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.*
+
+@RestController
+@RequestMapping("/api/v1/universities")
+class UniversityControllerImpl(
+    private val universityService: UniversityService
+) : UniversityController {
+
+    @GetMapping
+    override fun getUniversities(
+        @ParameterObject @ModelAttribute request: UniversitySearchRequest,
+        @ExamScoreParams examScores: Map<String, Double>,
+        @RequestParam(defaultValue = "0") page: Int,
+        @RequestParam(defaultValue = "12") size: Int
+    ): ResponseEntity<ApiResponse<UniversityListResponse>> {
+        val pageable = PageRequest.of(page, size, Sort.by(Sort.Order.asc("nameEng"), Sort.Order.asc("nameKor")))
+        val query = request.toQuery(examScores)
+        val result = universityService.getUniversities(query, pageable)
+        return ApiResponse.success(result)
+    }
+
+    @GetMapping("/{id}")
+    override fun getUniversityDetail(
+        @PathVariable id: Long
+    ): ResponseEntity<ApiResponse<UniversityDetailResponse>> {
+        val result = universityService.getUniversityDetail(id)
+        return ApiResponse.success(result)
+    }
+}

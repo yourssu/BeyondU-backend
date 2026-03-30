@@ -23,10 +23,7 @@ class LanguageRequirementEntity(
     var minScore: Double,
 
     @Column(name = "level_code")
-    var levelCode: String? = null,
-
-    @Column(name = "is_available", nullable = false)
-    var isAvailable: Boolean = true
+    var levelCode: String? = null
 ) {
     companion object {
         fun from(languageRequirement: LanguageRequirement) =
@@ -36,8 +33,7 @@ class LanguageRequirementEntity(
                 languageGroup = languageRequirement.languageGroup,
                 examType = languageRequirement.examType,
                 minScore = languageRequirement.minScore,
-                levelCode = languageRequirement.levelCode,
-                isAvailable = languageRequirement.isAvailable
+                levelCode = languageRequirement.levelCode
             )
     }
 
@@ -48,8 +44,7 @@ class LanguageRequirementEntity(
             languageGroup = languageGroup,
             examType = examType,
             minScore = minScore,
-            levelCode = levelCode,
-            isAvailable = isAvailable
+            levelCode = levelCode
         )
     }
 }

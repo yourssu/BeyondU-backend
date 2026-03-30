@@ -20,17 +20,13 @@ class LanguageRequirementReader(
         if (requirements.isEmpty()) return null
 
         return requirements.joinToString(" / ") { requirement ->
-            when {
-                requirement.examType.equals(ExamType.HSK.displayName, ignoreCase = true) && requirement.levelCode != null -> {
-                    "${ExamType.HSK.displayName} ${requirement.levelCode}"
-                }
-                requirement.examType.equals(ExamType.HSK.displayName, ignoreCase = true) -> {
-                    "${ExamType.HSK.displayName} ${requirement.minScore.toInt()}"
-                }
-                else -> {
-                    "${requirement.examType} ${formatScore(requirement.minScore)}"
-                }
+            val examType = ExamType.fromDisplayName(requirement.examType)
+            val scoreText = if (examType != null) {
+                "${examType.prefix}${formatScore(requirement.minScore)}${examType.suffix}"
+            } else {
+                formatScore(requirement.minScore)
             }
+            "${requirement.examType} $scoreText"
         }
     }
 
