@@ -9,21 +9,16 @@ class LanguageRequirementEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long? = null,
-
     @Column(name = "university_id", nullable = false)
     var universityId: Long,
-
     @Column(name = "language_group", nullable = false)
     var languageGroup: String,
-
     @Column(name = "exam_type", nullable = false)
     var examType: String,
-
     @Column(name = "min_score", nullable = false)
     var minScore: Double,
-
     @Column(name = "level_code")
-    var levelCode: String? = null
+    var levelCode: String? = null,
 ) {
     companion object {
         fun from(languageRequirement: LanguageRequirement) =
@@ -33,18 +28,17 @@ class LanguageRequirementEntity(
                 languageGroup = languageRequirement.languageGroup,
                 examType = languageRequirement.examType,
                 minScore = languageRequirement.minScore,
-                levelCode = languageRequirement.levelCode
+                levelCode = languageRequirement.levelCode,
             )
     }
 
-    fun toDomain(): LanguageRequirement {
-        return LanguageRequirement(
+    fun toDomain(): LanguageRequirement =
+        LanguageRequirement(
             id = id,
             universityId = universityId,
             languageGroup = languageGroup,
             examType = examType,
             minScore = minScore,
-            levelCode = levelCode
+            levelCode = levelCode,
         )
-    }
 }

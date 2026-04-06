@@ -2,7 +2,11 @@ package org.example.beyondubackend.common.code
 
 import org.springframework.http.HttpStatus
 
-enum class ErrorCode(val code: String, val httpStatus: HttpStatus, val message: String) {
+enum class ErrorCode(
+    val code: String,
+    val httpStatus: HttpStatus,
+    val message: String,
+) {
     // COMMON
     INVALID_INPUT("C400_001", HttpStatus.BAD_REQUEST, "입력값이 올바르지 않습니다."),
     BAD_REQUEST("C400_002", HttpStatus.BAD_REQUEST, "잘못된 요청입니다."),
@@ -18,5 +22,5 @@ enum class ErrorCode(val code: String, val httpStatus: HttpStatus, val message: 
     UNIVERSITY_NOT_FOUND("U404_001", HttpStatus.NOT_FOUND, "대학교를 찾을 수 없습니다."),
 
     // LANGUAGE REQUIREMENT
-    INVALID_EXAM_SCORE("L400_001", HttpStatus.BAD_REQUEST, "어학 점수가 유효 범위를 벗어났습니다.")
+    INVALID_EXAM_SCORE("L400_001", HttpStatus.BAD_REQUEST, "어학 점수가 유효 범위를 벗어났습니다."),
 }

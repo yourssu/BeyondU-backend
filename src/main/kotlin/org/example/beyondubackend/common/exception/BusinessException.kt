@@ -4,5 +4,5 @@ import org.example.beyondubackend.common.code.ErrorCode
 
 open class BusinessException(
     val errorCode: ErrorCode,
-    message: String = errorCode.message
+    message: String = errorCode.message,
 ) : RuntimeException(message)

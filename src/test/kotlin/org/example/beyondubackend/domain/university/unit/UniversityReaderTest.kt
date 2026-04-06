@@ -15,7 +15,6 @@ import org.mockito.junit.jupiter.MockitoExtension
 
 @ExtendWith(MockitoExtension::class)
 class UniversityReaderTest {
-
     @Mock
     private lateinit var universityRepository: UniversityRepository
 
@@ -36,23 +35,28 @@ class UniversityReaderTest {
 
     @Test
     fun `존재하는 ID로 조회 시 University 도메인 객체가 반환된다`() {
-        val university = org.example.beyondubackend.domain.university.implement.University(
-            id = 1L,
-            semester = "2024-1",
-            region = "미주",
-            nation = "USA",
-            nameKor = "하버드대학교",
-            nameEng = "Harvard University",
-            minGpa = 3.0,
-            remark = "특이사항 없음",
-            isExchange = true,
-            isVisit = false
-        )
+        val university =
+            org.example.beyondubackend.domain.university.implement.University(
+                id = 1L,
+                semester = "2024-1",
+                region = "미주",
+                nation = "USA",
+                nameKor = "하버드대학교",
+                nameEng = "Harvard University",
+                minGpa = 3.0,
+                remark = "특이사항 없음",
+                isExchange = true,
+                isVisit = false,
+            )
         given(universityRepository.findById(1L)).willReturn(university)
 
         val result = universityReader.getUniversityById(1L)
 
-        org.assertj.core.api.Assertions.assertThat(result.id).isEqualTo(1L)
-        org.assertj.core.api.Assertions.assertThat(result.nameKor).isEqualTo("하버드대학교")
+        org.assertj.core.api.Assertions
+            .assertThat(result.id)
+            .isEqualTo(1L)
+        org.assertj.core.api.Assertions
+            .assertThat(result.nameKor)
+            .isEqualTo("하버드대학교")
     }
 }

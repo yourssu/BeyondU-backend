@@ -8,11 +8,11 @@ import org.springframework.stereotype.Component
 
 @Component
 class UniversityReader(
-    private val universityRepository: UniversityRepository
+    private val universityRepository: UniversityRepository,
 ) {
-
     fun getUniversitiesWithFilters(
-        nation: String?,
+        nations: List<String>?,
+        region: String?,
         isExchange: Boolean?,
         isVisit: Boolean?,
         search: String?,
@@ -20,15 +20,22 @@ class UniversityReader(
         major: String?,
         hasReview: Boolean?,
         examScores: Map<String, Double>,
-        pageable: Pageable
-    ): Page<University> {
-        return universityRepository.findAllWithFilters(
-            nation, isExchange, isVisit, search, gpa, major, hasReview, examScores, pageable
+        pageable: Pageable,
+    ): Page<University> =
+        universityRepository.findAllWithFilters(
+            nations,
+            region,
+            isExchange,
+            isVisit,
+            search,
+            gpa,
+            major,
+            hasReview,
+            examScores,
+            pageable,
         )
-    }
 
-    fun getUniversityById(id: Long): University {
-        return universityRepository.findById(id)
+    fun getUniversityById(id: Long): University =
+        universityRepository.findById(id)
             ?: throw BusinessException(ErrorCode.UNIVERSITY_NOT_FOUND)
-    }
 }

@@ -15,28 +15,27 @@ import org.springframework.web.method.support.ModelAndViewContainer
  * QueryString에서 어학 시험 점수를 추출하여 Map으로 변환하는 ArgumentResolver
  */
 class ExamScoreArgumentResolver : HandlerMethodArgumentResolver {
-
-    override fun supportsParameter(parameter: MethodParameter): Boolean {
-        return parameter.hasParameterAnnotation(ExamScoreParams::class.java)
-    }
+    override fun supportsParameter(parameter: MethodParameter): Boolean = parameter.hasParameterAnnotation(ExamScoreParams::class.java)
 
     override fun resolveArgument(
         parameter: MethodParameter,
         mavContainer: ModelAndViewContainer?,
         webRequest: NativeWebRequest,
-        binderFactory: WebDataBinderFactory?
-    ): Map<String, Double> {
-        return ExamType.entries.mapNotNull { examType ->
-            val value = webRequest.getParameter(examType.paramName)?.toDoubleOrNull()
-            if (value != null) {
-                if (value < examType.minScore || value > examType.maxScore) {
-                    throw BusinessException(
-                        ErrorCode.INVALID_EXAM_SCORE,
-                        "${examType.displayName} 점수는 ${examType.minScore} ~ ${examType.maxScore} 범위여야 합니다."
-                    )
+        binderFactory: WebDataBinderFactory?,
+    ): Map<String, Double> =
+        ExamType.entries
+            .mapNotNull { examType ->
+                val value = webRequest.getParameter(examType.paramName)?.toDoubleOrNull()
+                if (value != null) {
+                    if (value < examType.minScore || value > examType.maxScore) {
+                        throw BusinessException(
+                            ErrorCode.INVALID_EXAM_SCORE,
+                            "${examType.displayName} 점수는 ${examType.minScore} ~ ${examType.maxScore} 범위여야 합니다.",
+                        )
+                    }
+                    examType.displayName to value
+                } else {
+                    null
                 }
-                examType.displayName to value
-            } else null
-        }.toMap()
-    }
+            }.toMap()
 }

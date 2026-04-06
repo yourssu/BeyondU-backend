@@ -5,15 +5,14 @@ import org.example.beyondubackend.domain.languagerequirement.implement.LanguageR
 data class LanguageRequirementResponse(
     val languageGroup: String,
     val examType: String,
-    val minScore: Double
+    val minScore: Double,
 ) {
     companion object {
-        fun from(languageRequirement: LanguageRequirement): LanguageRequirementResponse {
-            return LanguageRequirementResponse(
+        fun from(languageRequirement: LanguageRequirement): LanguageRequirementResponse =
+            LanguageRequirementResponse(
                 languageGroup = languageRequirement.languageGroup,
                 examType = languageRequirement.examType,
-                minScore = languageRequirement.minScore
+                minScore = languageRequirement.minScore,
             )
-        }
     }
 }

@@ -18,7 +18,6 @@ import org.springframework.test.context.ActiveProfiles
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 class UniversityFlowTest {
-
     @LocalServerPort
     private var port: Int = 0
 
@@ -51,47 +50,87 @@ class UniversityFlowTest {
         languageRequirementJpaRepository.deleteAll()
         universityJpaRepository.deleteAll()
 
-        uni1 = universityJpaRepository.save(makeUniversity(
-            nameKor = "하버드대학교", nameEng = "Harvard University",
-            nation = "USA", minGpa = 3.0,
-            isExchange = true, isVisit = false,
-            hasReview = true, reviewYear = "2024",
-            availableMajor = "Arts and Sciences, Business",
-            location = "Cambridge, MA", studentCount = "47,000"
-        ))
-        uni2 = universityJpaRepository.save(makeUniversity(
-            nameKor = "도쿄대학교", nameEng = "University of Tokyo",
-            nation = "JPN", minGpa = 3.5,
-            isExchange = true, isVisit = false,
-            availableMajor = "Engineering",
-            location = "Tokyo, Japan", studentCount = "28,000"
-        ))
-        uni3 = universityJpaRepository.save(makeUniversity(
-            nameKor = "캘리포니아주립대", nameEng = "California State University",
-            nation = "USA", minGpa = 2.5,
-            isExchange = false, isVisit = true,
-            location = "Los Angeles, CA"
-        ))
-        uni4 = universityJpaRepository.save(makeUniversity(
-            nameKor = "베이징대학교", nameEng = "Peking University",
-            nation = "CHN", minGpa = 3.8,
-            isExchange = true, isVisit = false,
-            hasReview = true, reviewYear = "2023",
-            availableMajor = "Business, Economics",
-            location = "Beijing, China", studentCount = "55,000"
-        ))
-        uni5 = universityJpaRepository.save(makeUniversity(
-            nameKor = "멜버른대학교", nameEng = "University of Melbourne",
-            nation = "AUS", minGpa = 2.0,
-            isExchange = true, isVisit = false
-        ))
+        uni1 =
+            universityJpaRepository.save(
+                makeUniversity(
+                    nameKor = "하버드대학교",
+                    nameEng = "Harvard University",
+                    nation = "USA",
+                    minGpa = 3.0,
+                    isExchange = true,
+                    isVisit = false,
+                    hasReview = true,
+                    reviewYear = "2024",
+                    availableMajor = "Arts and Sciences, Business",
+                    location = "Cambridge, MA",
+                    studentCount = "47,000",
+                ),
+            )
+        uni2 =
+            universityJpaRepository.save(
+                makeUniversity(
+                    nameKor = "도쿄대학교",
+                    nameEng = "University of Tokyo",
+                    nation = "JPN",
+                    minGpa = 3.5,
+                    isExchange = true,
+                    isVisit = false,
+                    region = "아시아",
+                    availableMajor = "Engineering",
+                    location = "Tokyo, Japan",
+                    studentCount = "28,000",
+                ),
+            )
+        uni3 =
+            universityJpaRepository.save(
+                makeUniversity(
+                    nameKor = "캘리포니아주립대",
+                    nameEng = "California State University",
+                    nation = "USA",
+                    minGpa = 2.5,
+                    isExchange = false,
+                    isVisit = true,
+                    location = "Los Angeles, CA",
+                ),
+            )
+        uni4 =
+            universityJpaRepository.save(
+                makeUniversity(
+                    nameKor = "베이징대학교",
+                    nameEng = "Peking University",
+                    nation = "CHN",
+                    minGpa = 3.8,
+                    isExchange = true,
+                    isVisit = false,
+                    hasReview = true,
+                    reviewYear = "2023",
+                    region = "아시아",
+                    availableMajor = "Business, Economics",
+                    location = "Beijing, China",
+                    studentCount = "55,000",
+                ),
+            )
+        uni5 =
+            universityJpaRepository.save(
+                makeUniversity(
+                    nameKor = "멜버른대학교",
+                    nameEng = "University of Melbourne",
+                    nation = "AUS",
+                    minGpa = 2.0,
+                    isExchange = true,
+                    isVisit = false,
+                    region = "오세아니아",
+                ),
+            )
 
-        languageRequirementJpaRepository.saveAll(listOf(
-            makeLangReq(uni1.id!!, "영어", "TOEFL iBT", 80.0),
-            makeLangReq(uni1.id!!, "영어", "IELTS", 6.0),
-            makeLangReq(uni2.id!!, "일본어", "JLPT", 2.0),
-            makeLangReq(uni4.id!!, "영어", "TOEFL iBT", 100.0)
-        ))
+        languageRequirementJpaRepository.saveAll(
+            listOf(
+                makeLangReq(uni1.id!!, "영어", "TOEFL iBT", 80.0),
+                makeLangReq(uni1.id!!, "영어", "IELTS", 6.0),
+                makeLangReq(uni2.id!!, "일본어", "JLPT", 2.0),
+                makeLangReq(uni4.id!!, "영어", "TOEFL iBT", 100.0),
+            ),
+        )
     }
 
     @AfterEach
@@ -192,7 +231,7 @@ class UniversityFlowTest {
 
     @Test
     fun `나라 USA + GPA 3점5 + TOEFL IBT 80점 조합 시 조건 모두 충족하는 미국 대학만 반환된다`() {
-        val response = get<Map<String, Any?>>("$baseUrl?nation=USA&gpa=3.5&TOEFL_IBT=80")
+        val response = get<Map<String, Any?>>("$baseUrl?nations=USA&gpa=3.5&TOEFL_IBT=80")
 
         val ids = universityIds(response)
         // USA: uni1, uni3 / GPA: uni1(3.0), uni3(2.5) / 어학: uni1 TOEFL 충족, uni3 없음
@@ -201,18 +240,17 @@ class UniversityFlowTest {
 
     @Test
     fun `나라 USA + GPA 3점5 + 어학 2개(OR) 조합 시 미국 대학 중 조건 충족 반환`() {
-        val response = get<Map<String, Any?>>("$baseUrl?nation=USA&gpa=3.5&TOEFL_IBT=80&IELTS=6.0")
+        val response = get<Map<String, Any?>>("$baseUrl?nations=USA&gpa=3.5&TOEFL_IBT=80&IELTS=6.0")
 
         val ids = universityIds(response)
         assertThat(ids).containsExactlyInAnyOrder(uni1.id, uni3.id)
     }
 
     @Test
-    fun `나라 JPN + GPA 4점0 + JLPT 2 조합 시 도쿄대가 반환된다`() {
-        val response = get<Map<String, Any?>>("$baseUrl?nation=JPN&gpa=4.0&JLPT=2")
+    fun `유효하지 않은 nations 코드 JPN 사용 시 400 에러가 반환된다`() {
+        val response = get<Map<String, Any?>>("$baseUrl?nations=JPN&gpa=4.0&JLPT=2")
 
-        val ids = universityIds(response)
-        assertThat(ids).containsExactlyInAnyOrder(uni2.id)
+        assertThat(response.statusCode).isEqualTo(HttpStatus.BAD_REQUEST)
     }
 
     // ── 전체 조회: JLPT 역방향 필터 ────────────────────────────────────────
@@ -240,7 +278,7 @@ class UniversityFlowTest {
 
     @Test
     fun `국가 USA 필터 시 미국 대학만 반환된다`() {
-        val response = get<Map<String, Any?>>("$baseUrl?nation=USA")
+        val response = get<Map<String, Any?>>("$baseUrl?nations=USA")
 
         val ids = universityIds(response)
         assertThat(ids).containsExactlyInAnyOrder(uni1.id, uni3.id)
@@ -300,7 +338,7 @@ class UniversityFlowTest {
 
     @Test
     fun `일치하는 대학이 없으면 빈 리스트와 totalElements 0이 반환된다`() {
-        val response = get<Map<String, Any?>>("$baseUrl?nation=DEU")
+        val response = get<Map<String, Any?>>("$baseUrl?nations=GERMANY")
 
         assertThat(response.statusCode).isEqualTo(HttpStatus.OK)
         val result = result(response)
@@ -335,7 +373,7 @@ class UniversityFlowTest {
 
     @Test
     fun `TOEFL IBT 점수가 120 초과이면 400 에러가 반환된다`() {
-        val response = get<Map<String, Any?>>( "$baseUrl?TOEFL_IBT=999")
+        val response = get<Map<String, Any?>>("$baseUrl?TOEFL_IBT=999")
 
         assertThat(response.statusCode).isEqualTo(HttpStatus.BAD_REQUEST)
     }
@@ -366,6 +404,7 @@ class UniversityFlowTest {
         val response = get<Map<String, Any?>>("$baseUrl/${uni1.id}")
 
         val detail = result(response)
+
         @Suppress("UNCHECKED_CAST")
         val majors = detail["availableMajors"] as List<String>
         assertThat(majors).containsExactlyInAnyOrder("Arts and Sciences", "Business")
@@ -374,10 +413,14 @@ class UniversityFlowTest {
     @Test
     fun `상세 조회 시 courseListUrl은 availableSubject 필드 값이다`() {
         val url = "https://example.com/courses"
-        val saved = universityJpaRepository.save(makeUniversity(
-            nameKor = "URL테스트대학", nameEng = "URL Test University",
-            availableSubject = url
-        ))
+        val saved =
+            universityJpaRepository.save(
+                makeUniversity(
+                    nameKor = "URL테스트대학",
+                    nameEng = "URL Test University",
+                    availableSubject = url,
+                ),
+            )
 
         val response = get<Map<String, Any?>>("$baseUrl/${saved.id}")
 
@@ -398,6 +441,7 @@ class UniversityFlowTest {
         val response = get<Map<String, Any?>>("$baseUrl/${uni1.id}")
 
         val detail = result(response)
+
         @Suppress("UNCHECKED_CAST")
         val langReqs = detail["languageRequirements"] as List<Map<String, Any?>>
         assertThat(langReqs).hasSize(2)
@@ -410,6 +454,7 @@ class UniversityFlowTest {
         val response = get<Map<String, Any?>>("$baseUrl/${uni5.id}")
 
         val detail = result(response)
+
         @Suppress("UNCHECKED_CAST")
         val langReqs = detail["languageRequirements"] as List<*>
         assertThat(langReqs).isEmpty()
@@ -433,6 +478,48 @@ class UniversityFlowTest {
         assertThat(response.statusCode).isEqualTo(HttpStatus.NOT_FOUND)
     }
 
+    // ── 전체 조회: nations 복수 OR 조건 (#37) ──────────────────────────────
+
+    @Test
+    fun `nations 단일 값은 해당 국가 대학만 반환된다`() {
+        val response = get<Map<String, Any?>>("$baseUrl?nations=USA")
+
+        val ids = universityIds(response)
+        assertThat(ids).containsExactlyInAnyOrder(uni1.id, uni3.id)
+    }
+
+    @Test
+    fun `유효하지 않은 nations 코드 JPN 포함 시 400 에러가 반환된다`() {
+        val response = get<Map<String, Any?>>("$baseUrl?nations=USA&nations=JPN")
+
+        assertThat(response.statusCode).isEqualTo(HttpStatus.BAD_REQUEST)
+    }
+
+    @Test
+    fun `유효하지 않은 nations 코드 AUS 포함 시 400 에러가 반환된다`() {
+        val response = get<Map<String, Any?>>("$baseUrl?nations=USA&nations=JPN&nations=AUS")
+
+        assertThat(response.statusCode).isEqualTo(HttpStatus.BAD_REQUEST)
+    }
+
+    // ── 전체 조회: region 대륙 필터 (#37) ──────────────────────────────────
+    // 픽스처 region: uni1/uni3=미주, uni2/uni4=아시아, uni5=오세아니아
+
+    @Test
+    fun `유효하지 않은 region 이름 사용 시 400 에러가 반환된다`() {
+        val response = get<Map<String, Any?>>("$baseUrl?region=없는대륙")
+
+        assertThat(response.statusCode).isEqualTo(HttpStatus.BAD_REQUEST)
+    }
+
+    @Test
+    fun `region 아시아 필터 시 아시아 대학만 반환된다`() {
+        val response = get<Map<String, Any?>>("$baseUrl?region=아시아")
+
+        val ids = universityIds(response)
+        assertThat(ids).containsExactlyInAnyOrder(uni2.id, uni4.id)
+    }
+
     // ── 헬퍼 ────────────────────────────────────────────────────────────────
 
     @Suppress("UNCHECKED_CAST")
@@ -447,9 +534,10 @@ class UniversityFlowTest {
     private fun universities(response: org.springframework.http.ResponseEntity<Map<String, Any?>>) =
         (result(response)["universities"] as List<Map<String, Any?>>)
 
-    private fun universityIds(response: org.springframework.http.ResponseEntity<Map<String, Any?>>): List<Long> {
-        return universities(response).map { (it["id"] as Number).toLong() }
-    }
+    private fun universityIds(response: org.springframework.http.ResponseEntity<Map<String, Any?>>): List<Long> =
+        universities(response).map {
+            (it["id"] as Number).toLong()
+        }
 
     private fun makeUniversity(
         nameKor: String = "테스트대학",
@@ -460,13 +548,14 @@ class UniversityFlowTest {
         isVisit: Boolean = false,
         hasReview: Boolean = false,
         reviewYear: String? = null,
+        region: String = "미주",
         availableMajor: String? = null,
         availableSubject: String? = null,
         location: String? = null,
-        studentCount: String? = null
+        studentCount: String? = null,
     ) = UniversityEntity(
         semester = "2024-1",
-        region = "미주",
+        region = region,
         nation = nation,
         nameKor = nameKor,
         nameEng = nameEng,
@@ -479,7 +568,7 @@ class UniversityFlowTest {
         availableMajor = availableMajor,
         availableSubject = availableSubject,
         location = location,
-        studentCount = studentCount
+        studentCount = studentCount,
     )
 
     private fun makeLangReq(
@@ -487,12 +576,12 @@ class UniversityFlowTest {
         languageGroup: String,
         examType: String,
         minScore: Double,
-        levelCode: String? = null
+        levelCode: String? = null,
     ) = LanguageRequirementEntity(
         universityId = universityId,
         languageGroup = languageGroup,
         examType = examType,
         minScore = minScore,
-        levelCode = levelCode
+        levelCode = levelCode,
     )
 }

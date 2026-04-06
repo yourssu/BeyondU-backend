@@ -5,7 +5,8 @@ import org.springframework.data.domain.Pageable
 
 interface UniversityRepository {
     fun findAllWithFilters(
-        nation: String?,
+        nations: List<String>?,
+        region: String?,
         isExchange: Boolean?,
         isVisit: Boolean?,
         search: String?,
@@ -13,7 +14,7 @@ interface UniversityRepository {
         major: String?,
         hasReview: Boolean?,
         examScores: Map<String, Double>,
-        pageable: Pageable
+        pageable: Pageable,
     ): Page<University>
 
     fun findById(id: Long): University?

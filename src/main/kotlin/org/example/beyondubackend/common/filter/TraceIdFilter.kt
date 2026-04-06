@@ -10,13 +10,17 @@ import java.util.*
 
 @Component
 class TraceIdFilter : OncePerRequestFilter() {
-
     override fun doFilterInternal(
         request: HttpServletRequest,
         response: HttpServletResponse,
-        filterChain: FilterChain
+        filterChain: FilterChain,
     ) {
-        val traceId = UUID.randomUUID().toString().replace("-", "").take(16)
+        val traceId =
+            UUID
+                .randomUUID()
+                .toString()
+                .replace("-", "")
+                .take(16)
         try {
             MDC.put("traceId", traceId)
             filterChain.doFilter(request, response)

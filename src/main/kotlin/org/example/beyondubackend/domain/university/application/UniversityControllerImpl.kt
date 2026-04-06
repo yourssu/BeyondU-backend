@@ -15,15 +15,14 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("/api/v1/universities")
 class UniversityControllerImpl(
-    private val universityService: UniversityService
+    private val universityService: UniversityService,
 ) : UniversityController {
-
     @GetMapping
     override fun getUniversities(
         @ParameterObject @ModelAttribute request: UniversitySearchRequest,
         @ExamScoreParams examScores: Map<String, Double>,
         @RequestParam(defaultValue = "0") page: Int,
-        @RequestParam(defaultValue = "12") size: Int
+        @RequestParam(defaultValue = "12") size: Int,
     ): ResponseEntity<ApiResponse<UniversityListResponse>> {
         val pageable = PageRequest.of(page, size, Sort.by(Sort.Order.asc("nameEng"), Sort.Order.asc("nameKor")))
         val query = request.toQuery(examScores)
@@ -33,7 +32,7 @@ class UniversityControllerImpl(
 
     @GetMapping("/{id}")
     override fun getUniversityDetail(
-        @PathVariable id: Long
+        @PathVariable id: Long,
     ): ResponseEntity<ApiResponse<UniversityDetailResponse>> {
         val result = universityService.getUniversityDetail(id)
         return ApiResponse.success(result)

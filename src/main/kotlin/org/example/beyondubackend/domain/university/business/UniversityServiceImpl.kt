@@ -15,53 +15,62 @@ import org.springframework.transaction.annotation.Transactional
 @Transactional(readOnly = true)
 class UniversityServiceImpl(
     private val universityReader: UniversityReader,
-    private val languageRequirementReader: LanguageRequirementReader
+    private val languageRequirementReader: LanguageRequirementReader,
 ) : UniversityService {
-
-    override fun getUniversities(query: UniversityQuery, pageable: Pageable): UniversityListResponse {
-        val universityPage = universityReader.getUniversitiesWithFilters(
-            nation = query.nation,
-            isExchange = query.isExchange,
-            isVisit = query.isVisit,
-            search = query.search,
-            gpa = query.gpa,
-            major = query.major,
-            hasReview = query.hasReview,
-            examScores = query.examScores,
-            pageable = pageable
-        )
+    override fun getUniversities(
+        query: UniversityQuery,
+        pageable: Pageable,
+    ): UniversityListResponse {
+        val universityPage =
+            universityReader.getUniversitiesWithFilters(
+                nations = query.nations,
+                region = query.region,
+                isExchange = query.isExchange,
+                isVisit = query.isVisit,
+                search = query.search,
+                gpa = query.gpa,
+                major = query.major,
+                hasReview = query.hasReview,
+                examScores = query.examScores,
+                pageable = pageable,
+            )
 
         // 대학 ID 목록 추출
         val universityIds = universityPage.content.map { it.id!! }
 
         // 언어 요구사항 일괄 조회
-        val languageRequirementsMap = if (universityIds.isNotEmpty()) {
-            languageRequirementReader.findByUniversityIds(universityIds)
-        } else {
-            emptyMap()
-        }
+        val languageRequirementsMap =
+            if (universityIds.isNotEmpty()) {
+                languageRequirementReader.findByUniversityIds(universityIds)
+            } else {
+                emptyMap()
+            }
 
         // DTO 변환 (languageRequirementSummary 포함)
-        val universities = universityPage.content.map { university ->
-            val requirements = languageRequirementsMap[university.id] ?: emptyList()
-            val summary = languageRequirementReader.generateSummary(requirements)
-            UniversityListResponse.UniversitySummaryDto.from(university, summary)
-        }
+        val universities =
+            universityPage.content.map { university ->
+                val requirements = languageRequirementsMap[university.id] ?: emptyList()
+                val summary = languageRequirementReader.generateSummary(requirements)
+                UniversityListResponse.UniversitySummaryDto.from(university, summary)
+            }
 
-        val pageInfo = PageInfo(
-            currentPage = universityPage.number,
-            totalElements = universityPage.totalElements,
-            totalPages = universityPage.totalPages,
-            isLast = universityPage.isLast
-        )
+        val pageInfo =
+            PageInfo(
+                currentPage = universityPage.number,
+                totalElements = universityPage.totalElements,
+                totalPages = universityPage.totalPages,
+                isLast = universityPage.isLast,
+            )
 
         return UniversityListResponse(universities, pageInfo)
     }
 
     override fun getUniversityDetail(id: Long): UniversityDetailResponse {
         val university = universityReader.getUniversityById(id)
-        val languageRequirements = languageRequirementReader.findByUniversityId(id)
-            .map { LanguageRequirementResponse.from(it) }
+        val languageRequirements =
+            languageRequirementReader
+                .findByUniversityId(id)
+                .map { LanguageRequirementResponse.from(it) }
 
         return UniversityDetailResponse.from(university, languageRequirements)
     }

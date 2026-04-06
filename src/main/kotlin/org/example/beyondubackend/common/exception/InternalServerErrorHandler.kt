@@ -8,10 +8,8 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 
-
 @RestControllerAdvice
 class ServerExceptionHandler {
-
     private val logger = LoggerFactory.getLogger(ServerExceptionHandler::class.java)
 
     // 데이터베이스 연결 실패 등 인프라 오류

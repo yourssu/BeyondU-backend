@@ -5,9 +5,9 @@ import org.example.beyondubackend.domain.university.business.dto.LanguageRequire
 import org.example.beyondubackend.domain.university.business.dto.UniversityDetailResponse
 import org.example.beyondubackend.domain.university.implement.University
 import org.junit.jupiter.api.Test
+import java.util.*
 
 class UniversityDetailResponseTest {
-
     // ── availableMajors 파싱 (availableMajor DB 필드 → 콤마 분리 리스트) ───
 
     @Test
@@ -105,6 +105,48 @@ class UniversityDetailResponseTest {
         assertThat(result.programType).isEqualTo("")
     }
 
+    @Test
+    fun `isExchange와 isVisit 모두 true이면 isExchange가 우선되어 programType이 일반교환이다`() {
+        val university = makeUniversity(isExchange = true, isVisit = true)
+
+        val result = UniversityDetailResponse.from(university, emptyList())
+
+        assertThat(result.programType).isEqualTo("일반교환")
+    }
+
+    // ── reviewReportUrl (#38) ────────────────────────────────────────────────
+
+    @Test
+    fun `hasReview true이면 reviewReportUrl이 nameEng Base64 인코딩 URL로 반환된다`() {
+        val university = makeUniversity(hasReview = true, nameEng = "Harvard University")
+
+        val result = UniversityDetailResponse.from(university, emptyList())
+
+        val encoded = Base64.getEncoder().encodeToString("Harvard University".toByteArray())
+        assertThat(result.reviewReportUrl)
+            .isEqualTo("https://study.ssu.ac.kr/community/exp_list.do?searchVal=$encoded&siteCd=01&boardCd=07")
+    }
+
+    @Test
+    fun `hasReview false이면 reviewReportUrl이 null이다`() {
+        val university = makeUniversity(hasReview = false, nameEng = "Harvard University")
+
+        val result = UniversityDetailResponse.from(university, emptyList())
+
+        assertThat(result.reviewReportUrl).isNull()
+    }
+
+    @Test
+    fun `nameEng에 공백이 포함된 경우에도 Base64 인코딩이 정확하다`() {
+        val university = makeUniversity(hasReview = true, nameEng = "University of Melbourne")
+
+        val result = UniversityDetailResponse.from(university, emptyList())
+
+        val encoded = Base64.getEncoder().encodeToString("University of Melbourne".toByteArray())
+        assertThat(result.reviewReportUrl)
+            .isEqualTo("https://study.ssu.ac.kr/community/exp_list.do?searchVal=$encoded&siteCd=01&boardCd=07")
+    }
+
     // ── location / studentCount 직접 매핑 ──────────────────────────────────
 
     @Test
@@ -148,9 +190,10 @@ class UniversityDetailResponseTest {
     @Test
     fun `전달된 languageRequirements 리스트가 그대로 포함된다`() {
         val university = makeUniversity()
-        val langReqs = listOf(
-            LanguageRequirementResponse(languageGroup = "영어", examType = "TOEFL iBT", minScore = 80.0)
-        )
+        val langReqs =
+            listOf(
+                LanguageRequirementResponse(languageGroup = "영어", examType = "TOEFL iBT", minScore = 80.0),
+            )
 
         val result = UniversityDetailResponse.from(university, langReqs)
 
@@ -164,24 +207,27 @@ class UniversityDetailResponseTest {
         id: Long = 1L,
         isExchange: Boolean = true,
         isVisit: Boolean = false,
+        hasReview: Boolean = false,
+        nameEng: String = "Test University",
         availableMajor: String? = null,
         availableSubject: String? = null,
         location: String? = null,
-        studentCount: String? = null
+        studentCount: String? = null,
     ) = University(
         id = id,
         semester = "2024-1",
         region = "미주",
         nation = "USA",
         nameKor = "테스트대학교",
-        nameEng = "Test University",
+        nameEng = nameEng,
         minGpa = 3.0,
         remark = "특이사항 없음",
         isExchange = isExchange,
         isVisit = isVisit,
+        hasReview = hasReview,
         availableMajor = availableMajor,
         availableSubject = availableSubject,
         location = location,
-        studentCount = studentCount
+        studentCount = studentCount,
     )
 }

@@ -12,7 +12,6 @@ import org.mockito.junit.jupiter.MockitoExtension
 
 @ExtendWith(MockitoExtension::class)
 class LanguageRequirementSummaryTest {
-
     @Mock
     private lateinit var languageRequirementRepository: LanguageRequirementRepository
 
@@ -48,10 +47,11 @@ class LanguageRequirementSummaryTest {
 
     @Test
     fun `복수 요구사항은 슬래시로 구분하여 모두 표시된다`() {
-        val requirements = listOf(
-            req("TOEFL iBT", 100.0),
-            req("IELTS", 7.0)
-        )
+        val requirements =
+            listOf(
+                req("TOEFL iBT", 100.0),
+                req("IELTS", 7.0),
+            )
 
         val result = reader.generateSummary(requirements)
 
@@ -79,11 +79,12 @@ class LanguageRequirementSummaryTest {
 
     @Test
     fun `세 개 이상 요구사항도 슬래시로 올바르게 연결된다`() {
-        val requirements = listOf(
-            req("TOEFL iBT", 80.0),
-            req("TOEIC", 700.0),
-            req("IELTS", 6.0)
-        )
+        val requirements =
+            listOf(
+                req("TOEFL iBT", 80.0),
+                req("TOEIC", 700.0),
+                req("IELTS", 6.0),
+            )
 
         val result = reader.generateSummary(requirements)
 
@@ -96,12 +97,12 @@ class LanguageRequirementSummaryTest {
     private fun req(
         examType: String,
         minScore: Double,
-        levelCode: String? = null
+        levelCode: String? = null,
     ) = LanguageRequirement(
         universityId = 1L,
         languageGroup = "영어",
         examType = examType,
         minScore = minScore,
-        levelCode = levelCode
+        levelCode = levelCode,
     )
 }
