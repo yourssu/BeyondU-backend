@@ -13,6 +13,7 @@ data class UniversityDetailResponse(
     val programType: String,
     val badge: String,
     val hasReview: Boolean,
+    val reviewReportUrl: String?,
     val minGpa: Double,
     val websiteUrl: String?,
     val significantNote: String?,
@@ -45,6 +46,7 @@ data class UniversityDetailResponse(
                 programType = programType,
                 badge = university.badge,
                 hasReview = university.hasReview,
+                reviewReportUrl = null, // TODO #38: hasReview=true일 때 Base64(nameEng) URL 생성
                 minGpa = university.minGpa,
                 websiteUrl = university.websiteUrl,
                 significantNote = university.significantNote,

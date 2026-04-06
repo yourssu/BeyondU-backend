@@ -20,7 +20,8 @@ class UniversityRepositoryImpl(
 ) : UniversityRepository {
 
     override fun findAllWithFilters(
-        nation: String?,
+        nations: List<String>?,
+        region: String?,
         isExchange: Boolean?,
         isVisit: Boolean?,
         search: String?,
@@ -34,7 +35,8 @@ class UniversityRepositoryImpl(
         val query = queryFactory
             .selectFrom(universityEntity)
             .where(
-                nationEq(nation),
+                nationsIn(nations),
+                regionEq(region),
                 isExchangeEq(isExchange),
                 isVisitEq(isVisit),
                 searchKeyword(search),
@@ -60,7 +62,8 @@ class UniversityRepositoryImpl(
             .select(universityEntity.count())
             .from(universityEntity)
             .where(
-                nationEq(nation),
+                nationsIn(nations),
+                regionEq(region),
                 isExchangeEq(isExchange),
                 isVisitEq(isVisit),
                 searchKeyword(search),
@@ -78,8 +81,12 @@ class UniversityRepositoryImpl(
         return universityJpaRepository.findById(id).orElse(null)?.toDomain()
     }
 
-    private fun nationEq(nation: String?): BooleanExpression? {
-        return nation?.let { universityEntity.nation.eq(it) }
+    private fun nationsIn(nations: List<String>?): BooleanExpression? {
+        return nations?.takeIf { it.isNotEmpty() }?.let { universityEntity.nation.`in`(it) }
+    }
+
+    private fun regionEq(region: String?): BooleanExpression? {
+        return region?.let { universityEntity.region.eq(it) }
     }
 
     private fun isExchangeEq(isExchange: Boolean?): BooleanExpression? {
@@ -99,13 +106,6 @@ class UniversityRepositoryImpl(
 
     private fun gpaLoe(gpa: Double?): BooleanExpression? {
         return gpa?.let { universityEntity.minGpa.loe(it) }
-    }
-
-    private fun nationsIn(nations: String?): BooleanExpression? {
-        return nations?.let {
-            val nationList = it.split(",").map { nation -> nation.trim() }
-            universityEntity.nation.`in`(nationList)
-        }
     }
 
     private fun majorContains(major: String?): BooleanExpression? {

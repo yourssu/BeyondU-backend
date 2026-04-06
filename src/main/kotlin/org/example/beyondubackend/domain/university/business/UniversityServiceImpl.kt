@@ -20,7 +20,8 @@ class UniversityServiceImpl(
 
     override fun getUniversities(query: UniversityQuery, pageable: Pageable): UniversityListResponse {
         val universityPage = universityReader.getUniversitiesWithFilters(
-            nation = query.nation,
+            nations = query.nations,
+            region = query.region,
             isExchange = query.isExchange,
             isVisit = query.isVisit,
             search = query.search,

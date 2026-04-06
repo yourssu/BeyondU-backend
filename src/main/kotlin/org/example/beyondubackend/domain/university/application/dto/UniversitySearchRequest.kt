@@ -1,11 +1,19 @@
 package org.example.beyondubackend.domain.university.application.dto
 
 import io.swagger.v3.oas.annotations.media.Schema
+import org.example.beyondubackend.common.code.ErrorCode
+import org.example.beyondubackend.common.enums.Nation
+import org.example.beyondubackend.common.enums.Region
+import org.example.beyondubackend.common.exception.BusinessException
 import org.example.beyondubackend.domain.university.business.query.UniversityQuery
 
 data class UniversitySearchRequest(
-    @Schema(description = "국가 필터 (예: 미국, 일본)")
+    @Schema(description = "국가 필터 단일값 (하위 호환, 예: ?nation=USA)")
     val nation: String? = null,
+    @Schema(description = "국가 필터 복수값 (예: ?nations=USA&nations=JPN)", example = "USA")
+    val nations: List<String>? = null,
+    @Schema(description = "대륙 필터 (예: 유럽, 아시아, 북미, 남미, 오세아니아, 아프리카)")
+    val region: String? = null,
     @Schema(description = "교환학생 가능 여부")
     val isExchange: Boolean? = null,
     @Schema(description = "방문학생 가능 여부")
@@ -21,8 +29,18 @@ data class UniversitySearchRequest(
     val hasReview: Boolean? = null
 ) {
     fun toQuery(examScores: Map<String, Double>): UniversityQuery {
+        val mergedNations = (nations.orEmpty() + listOfNotNull(nation))
+            .map { it.trim() }
+            .filter { it.isNotBlank() }
+            .distinct()
+            .takeIf { it.isNotEmpty() }
+
+        validateNations(mergedNations)
+        validateRegion(region)
+
         return UniversityQuery(
-            nation = nation,
+            nations = mergedNations,
+            region = region,
             isExchange = isExchange,
             isVisit = isVisit,
             search = search,
@@ -31,5 +49,22 @@ data class UniversitySearchRequest(
             hasReview = hasReview,
             examScores = examScores
         )
+    }
+
+    private fun validateNations(nations: List<String>?) {
+        if (nations.isNullOrEmpty()) return
+        val validNames = Nation.entries.map { it.name }.toSet()
+        val invalid = nations.filter { it !in validNames }
+        if (invalid.isNotEmpty()) {
+            throw BusinessException(ErrorCode.INVALID_INPUT, "유효하지 않은 국가 코드: ${invalid.joinToString()}")
+        }
+    }
+
+    private fun validateRegion(region: String?) {
+        if (region == null) return
+        val validNames = Region.entries.map { it.displayName }.toSet()
+        if (region !in validNames) {
+            throw BusinessException(ErrorCode.INVALID_INPUT, "유효하지 않은 대륙: $region")
+        }
     }
 }

@@ -12,7 +12,8 @@ class UniversityReader(
 ) {
 
     fun getUniversitiesWithFilters(
-        nation: String?,
+        nations: List<String>?,
+        region: String?,
         isExchange: Boolean?,
         isVisit: Boolean?,
         search: String?,
@@ -23,7 +24,7 @@ class UniversityReader(
         pageable: Pageable
     ): Page<University> {
         return universityRepository.findAllWithFilters(
-            nation, isExchange, isVisit, search, gpa, major, hasReview, examScores, pageable
+            nations, region, isExchange, isVisit, search, gpa, major, hasReview, examScores, pageable
         )
     }
 
