@@ -18,7 +18,7 @@ data class UniversitySearchRequest(
     val isExchange: Boolean? = null,
     @Schema(description = "방문학생 가능 여부")
     val isVisit: Boolean? = null,
-    //TO DO: 대학 이름 검색 사용시 추가
+    // TO DO: 대학 이름 검색 사용시 추가
     @Schema(hidden = true)
     val search: String? = null,
     @Schema(description = "최소 GPA (입력한 GPA 이상 지원 가능한 학교 조회)", example = "3.5")
@@ -26,14 +26,15 @@ data class UniversitySearchRequest(
     @Schema(description = "전공 필터")
     val major: String? = null,
     @Schema(description = "후기 보유 여부")
-    val hasReview: Boolean? = null
+    val hasReview: Boolean? = null,
 ) {
     fun toQuery(examScores: Map<String, Double>): UniversityQuery {
-        val mergedNations = (nations.orEmpty() + listOfNotNull(nation))
-            .map { it.trim() }
-            .filter { it.isNotBlank() }
-            .distinct()
-            .takeIf { it.isNotEmpty() }
+        val mergedNations =
+            (nations.orEmpty() + listOfNotNull(nation))
+                .map { it.trim() }
+                .filter { it.isNotBlank() }
+                .distinct()
+                .takeIf { it.isNotEmpty() }
 
         validateNations(mergedNations)
         validateRegion(region)
@@ -47,7 +48,7 @@ data class UniversitySearchRequest(
             gpa = gpa,
             major = major,
             hasReview = hasReview,
-            examScores = examScores
+            examScores = examScores,
         )
     }
 

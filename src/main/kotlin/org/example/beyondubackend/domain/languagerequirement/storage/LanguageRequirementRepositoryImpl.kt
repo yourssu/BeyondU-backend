@@ -6,18 +6,18 @@ import org.springframework.stereotype.Repository
 
 @Repository
 class LanguageRequirementRepositoryImpl(
-    private val languageRequirementJpaRepository: LanguageRequirementJpaRepository
+    private val languageRequirementJpaRepository: LanguageRequirementJpaRepository,
 ) : LanguageRequirementRepository {
-
-    override fun findByUniversityId(universityId: Long): List<LanguageRequirement> {
-        return languageRequirementJpaRepository.findByUniversityId(universityId)
+    override fun findByUniversityId(universityId: Long): List<LanguageRequirement> =
+        languageRequirementJpaRepository
+            .findByUniversityId(universityId)
             .map { it.toDomain() }
-    }
 
     override fun findByUniversityIds(universityIds: List<Long>): Map<Long, List<LanguageRequirement>> {
         if (universityIds.isEmpty()) return emptyMap()
 
-        return languageRequirementJpaRepository.findByUniversityIdIn(universityIds)
+        return languageRequirementJpaRepository
+            .findByUniversityIdIn(universityIds)
             .groupBy { it.universityId }
             .mapValues { entry -> entry.value.map { it.toDomain() } }
     }

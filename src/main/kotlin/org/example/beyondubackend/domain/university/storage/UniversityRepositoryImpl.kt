@@ -16,9 +16,8 @@ import org.springframework.stereotype.Repository
 @Repository
 class UniversityRepositoryImpl(
     private val universityJpaRepository: UniversityJpaRepository,
-    private val queryFactory: JPAQueryFactory
+    private val queryFactory: JPAQueryFactory,
 ) : UniversityRepository {
-
     override fun findAllWithFilters(
         nations: List<String>?,
         region: String?,
@@ -29,125 +28,123 @@ class UniversityRepositoryImpl(
         major: String?,
         hasReview: Boolean?,
         examScores: Map<String, Double>,
-        pageable: Pageable
+        pageable: Pageable,
     ): Page<University> {
-
-        val query = queryFactory
-            .selectFrom(universityEntity)
-            .where(
-                nationsIn(nations),
-                regionEq(region),
-                isExchangeEq(isExchange),
-                isVisitEq(isVisit),
-                searchKeyword(search),
-                gpaLoe(gpa),
-                majorContains(major),
-                hasReviewEq(hasReview),
-                examScoresMatch(examScores)
-            )
-            .offset(pageable.offset)
-            .limit(pageable.pageSize.toLong())
+        val query =
+            queryFactory
+                .selectFrom(universityEntity)
+                .where(
+                    nationsIn(nations),
+                    regionEq(region),
+                    isExchangeEq(isExchange),
+                    isVisitEq(isVisit),
+                    searchKeyword(search),
+                    gpaLoe(gpa),
+                    majorContains(major),
+                    hasReviewEq(hasReview),
+                    examScoresMatch(examScores),
+                ).offset(pageable.offset)
+                .limit(pageable.pageSize.toLong())
 
         pageable.sort.forEach { order ->
             when (order.property) {
-                "nameEng" -> if (order.isAscending) query.orderBy(universityEntity.nameEng.asc())
-                            else query.orderBy(universityEntity.nameEng.desc())
-                "nameKor" -> if (order.isAscending) query.orderBy(universityEntity.nameKor.asc())
-                            else query.orderBy(universityEntity.nameKor.desc())
+                "nameEng" ->
+                    if (order.isAscending) {
+                        query.orderBy(universityEntity.nameEng.asc())
+                    } else {
+                        query.orderBy(universityEntity.nameEng.desc())
+                    }
+                "nameKor" ->
+                    if (order.isAscending) {
+                        query.orderBy(universityEntity.nameKor.asc())
+                    } else {
+                        query.orderBy(universityEntity.nameKor.desc())
+                    }
             }
         }
 
         val content = query.fetch().map { it.toDomain() }
-        val total = queryFactory
-            .select(universityEntity.count())
-            .from(universityEntity)
-            .where(
-                nationsIn(nations),
-                regionEq(region),
-                isExchangeEq(isExchange),
-                isVisitEq(isVisit),
-                searchKeyword(search),
-                gpaLoe(gpa),
-                majorContains(major),
-                hasReviewEq(hasReview),
-                examScoresMatch(examScores)
-            )
-            .fetchOne() ?: 0L
+        val total =
+            queryFactory
+                .select(universityEntity.count())
+                .from(universityEntity)
+                .where(
+                    nationsIn(nations),
+                    regionEq(region),
+                    isExchangeEq(isExchange),
+                    isVisitEq(isVisit),
+                    searchKeyword(search),
+                    gpaLoe(gpa),
+                    majorContains(major),
+                    hasReviewEq(hasReview),
+                    examScoresMatch(examScores),
+                ).fetchOne() ?: 0L
 
         return PageImpl(content, pageable, total)
     }
 
-    override fun findById(id: Long): University? {
-        return universityJpaRepository.findById(id).orElse(null)?.toDomain()
-    }
+    override fun findById(id: Long): University? = universityJpaRepository.findById(id).orElse(null)?.toDomain()
 
-    private fun nationsIn(nations: List<String>?): BooleanExpression? {
-        return nations?.takeIf { it.isNotEmpty() }?.let { universityEntity.nation.`in`(it) }
-    }
+    private fun nationsIn(nations: List<String>?): BooleanExpression? =
+        nations
+            ?.takeIf {
+                it.isNotEmpty()
+            }?.let { universityEntity.nation.`in`(it) }
 
-    private fun regionEq(region: String?): BooleanExpression? {
-        return region?.let { universityEntity.region.eq(it) }
-    }
+    private fun regionEq(region: String?): BooleanExpression? = region?.let { universityEntity.region.eq(it) }
 
-    private fun isExchangeEq(isExchange: Boolean?): BooleanExpression? {
-        return isExchange?.let { universityEntity.isExchange.eq(it) }
-    }
+    private fun isExchangeEq(isExchange: Boolean?): BooleanExpression? = isExchange?.let { universityEntity.isExchange.eq(it) }
 
-    private fun isVisitEq(isVisit: Boolean?): BooleanExpression? {
-        return isVisit?.let { universityEntity.isVisit.eq(it) }
-    }
+    private fun isVisitEq(isVisit: Boolean?): BooleanExpression? = isVisit?.let { universityEntity.isVisit.eq(it) }
 
-    private fun searchKeyword(search: String?): BooleanExpression? {
-        return search?.let {
-            universityEntity.nameKor.contains(it)
+    private fun searchKeyword(search: String?): BooleanExpression? =
+        search?.let {
+            universityEntity.nameKor
+                .contains(it)
                 .or(universityEntity.nameEng.contains(it))
         }
-    }
 
-    private fun gpaLoe(gpa: Double?): BooleanExpression? {
-        return gpa?.let { universityEntity.minGpa.loe(it) }
-    }
+    private fun gpaLoe(gpa: Double?): BooleanExpression? = gpa?.let { universityEntity.minGpa.loe(it) }
 
-    private fun majorContains(major: String?): BooleanExpression? {
-        return major?.let { universityEntity.availableMajor.contains(it) }
-    }
+    private fun majorContains(major: String?): BooleanExpression? = major?.let { universityEntity.availableMajor.contains(it) }
 
-    private fun hasReviewEq(hasReview: Boolean?): BooleanExpression? {
-        return hasReview?.let { universityEntity.hasReview.eq(it) }
-    }
+    private fun hasReviewEq(hasReview: Boolean?): BooleanExpression? = hasReview?.let { universityEntity.hasReview.eq(it) }
 
     private fun examScoresMatch(examScores: Map<String, Double>): BooleanExpression? {
         if (examScores.isEmpty()) return null
 
-        val examConditions = examScores.map { (examType, score) ->
-            // JLPT는 숫자가 낮을수록 높은 레벨 (N1 > N2 > ... > N5)
-            val scoreCondition = if (examType == ExamType.JLPT.displayName) {
-                languageRequirementEntity.minScore.goe(score)
-            } else {
-                languageRequirementEntity.minScore.loe(score)
-            }
+        val examConditions =
+            examScores
+                .map { (examType, score) ->
+                    // JLPT는 숫자가 낮을수록 높은 레벨 (N1 > N2 > ... > N5)
+                    val scoreCondition =
+                        if (examType == ExamType.JLPT.displayName) {
+                            languageRequirementEntity.minScore.goe(score)
+                        } else {
+                            languageRequirementEntity.minScore.loe(score)
+                        }
 
-            languageRequirementEntity.examType.eq(examType).and(scoreCondition)
-        }.reduce { acc, condition -> acc.or(condition) }
+                    languageRequirementEntity.examType.eq(examType).and(scoreCondition)
+                }.reduce { acc, condition -> acc.or(condition) }
 
         // 조건을 만족하는 language_requirement가 존재하는 경우
-        val hasMatchingRequirement = JPAExpressions
-            .selectOne()
-            .from(languageRequirementEntity)
-            .where(
-                languageRequirementEntity.universityId.eq(universityEntity.id),
-                examConditions
-            )
-            .exists()
+        val hasMatchingRequirement =
+            JPAExpressions
+                .selectOne()
+                .from(languageRequirementEntity)
+                .where(
+                    languageRequirementEntity.universityId.eq(universityEntity.id),
+                    examConditions,
+                ).exists()
 
         // language_requirement 자체가 없는 경우 (어학 요구사항 없음)
-        val hasNoRequirement = JPAExpressions
-            .selectOne()
-            .from(languageRequirementEntity)
-            .where(
-                languageRequirementEntity.universityId.eq(universityEntity.id)
-            )
-            .notExists()
+        val hasNoRequirement =
+            JPAExpressions
+                .selectOne()
+                .from(languageRequirementEntity)
+                .where(
+                    languageRequirementEntity.universityId.eq(universityEntity.id),
+                ).notExists()
 
         // 둘 중 하나라도 true면 조회 가능
         return hasMatchingRequirement.or(hasNoRequirement)

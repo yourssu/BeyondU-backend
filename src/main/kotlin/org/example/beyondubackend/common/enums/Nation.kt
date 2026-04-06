@@ -1,6 +1,8 @@
 package org.example.beyondubackend.common.enums
 
-enum class Nation(val displayName: String) {
+enum class Nation(
+    val displayName: String,
+) {
     GUATEMALA("과테말라"),
     GREECE("그리스"),
     NETHERLANDS("네덜란드"),
@@ -59,7 +61,8 @@ enum class Nation(val displayName: String) {
     PHILIPPINES("필리핀"),
     HUNGARY("헝가리"),
     AUSTRALIA("호주"),
-    HONG_KONG("홍콩");
+    HONG_KONG("홍콩"),
+    ;
 
     companion object {
         fun fromDisplayName(name: String): Nation? = entries.find { it.displayName == name }

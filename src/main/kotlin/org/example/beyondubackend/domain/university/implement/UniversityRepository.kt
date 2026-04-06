@@ -14,7 +14,7 @@ interface UniversityRepository {
         major: String?,
         hasReview: Boolean?,
         examScores: Map<String, Double>,
-        pageable: Pageable
+        pageable: Pageable,
     ): Page<University>
 
     fun findById(id: Long): University?

@@ -5,10 +5,9 @@ import org.example.beyondubackend.domain.university.business.dto.LanguageRequire
 import org.example.beyondubackend.domain.university.business.dto.UniversityDetailResponse
 import org.example.beyondubackend.domain.university.implement.University
 import org.junit.jupiter.api.Test
-import java.util.Base64
+import java.util.*
 
 class UniversityDetailResponseTest {
-
     // ── availableMajors 파싱 (availableMajor DB 필드 → 콤마 분리 리스트) ───
 
     @Test
@@ -191,9 +190,10 @@ class UniversityDetailResponseTest {
     @Test
     fun `전달된 languageRequirements 리스트가 그대로 포함된다`() {
         val university = makeUniversity()
-        val langReqs = listOf(
-            LanguageRequirementResponse(languageGroup = "영어", examType = "TOEFL iBT", minScore = 80.0)
-        )
+        val langReqs =
+            listOf(
+                LanguageRequirementResponse(languageGroup = "영어", examType = "TOEFL iBT", minScore = 80.0),
+            )
 
         val result = UniversityDetailResponse.from(university, langReqs)
 
@@ -212,7 +212,7 @@ class UniversityDetailResponseTest {
         availableMajor: String? = null,
         availableSubject: String? = null,
         location: String? = null,
-        studentCount: String? = null
+        studentCount: String? = null,
     ) = University(
         id = id,
         semester = "2024-1",
@@ -228,6 +228,6 @@ class UniversityDetailResponseTest {
         availableMajor = availableMajor,
         availableSubject = availableSubject,
         location = location,
-        studentCount = studentCount
+        studentCount = studentCount,
     )
 }

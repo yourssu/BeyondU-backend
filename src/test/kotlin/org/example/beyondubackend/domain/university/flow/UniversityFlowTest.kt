@@ -18,7 +18,6 @@ import org.springframework.test.context.ActiveProfiles
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 class UniversityFlowTest {
-
     @LocalServerPort
     private var port: Int = 0
 
@@ -51,50 +50,87 @@ class UniversityFlowTest {
         languageRequirementJpaRepository.deleteAll()
         universityJpaRepository.deleteAll()
 
-        uni1 = universityJpaRepository.save(makeUniversity(
-            nameKor = "하버드대학교", nameEng = "Harvard University",
-            nation = "USA", minGpa = 3.0,
-            isExchange = true, isVisit = false,
-            hasReview = true, reviewYear = "2024",
-            availableMajor = "Arts and Sciences, Business",
-            location = "Cambridge, MA", studentCount = "47,000"
-        ))
-        uni2 = universityJpaRepository.save(makeUniversity(
-            nameKor = "도쿄대학교", nameEng = "University of Tokyo",
-            nation = "JPN", minGpa = 3.5,
-            isExchange = true, isVisit = false,
-            region = "아시아",
-            availableMajor = "Engineering",
-            location = "Tokyo, Japan", studentCount = "28,000"
-        ))
-        uni3 = universityJpaRepository.save(makeUniversity(
-            nameKor = "캘리포니아주립대", nameEng = "California State University",
-            nation = "USA", minGpa = 2.5,
-            isExchange = false, isVisit = true,
-            location = "Los Angeles, CA"
-        ))
-        uni4 = universityJpaRepository.save(makeUniversity(
-            nameKor = "베이징대학교", nameEng = "Peking University",
-            nation = "CHN", minGpa = 3.8,
-            isExchange = true, isVisit = false,
-            hasReview = true, reviewYear = "2023",
-            region = "아시아",
-            availableMajor = "Business, Economics",
-            location = "Beijing, China", studentCount = "55,000"
-        ))
-        uni5 = universityJpaRepository.save(makeUniversity(
-            nameKor = "멜버른대학교", nameEng = "University of Melbourne",
-            nation = "AUS", minGpa = 2.0,
-            isExchange = true, isVisit = false,
-            region = "오세아니아"
-        ))
+        uni1 =
+            universityJpaRepository.save(
+                makeUniversity(
+                    nameKor = "하버드대학교",
+                    nameEng = "Harvard University",
+                    nation = "USA",
+                    minGpa = 3.0,
+                    isExchange = true,
+                    isVisit = false,
+                    hasReview = true,
+                    reviewYear = "2024",
+                    availableMajor = "Arts and Sciences, Business",
+                    location = "Cambridge, MA",
+                    studentCount = "47,000",
+                ),
+            )
+        uni2 =
+            universityJpaRepository.save(
+                makeUniversity(
+                    nameKor = "도쿄대학교",
+                    nameEng = "University of Tokyo",
+                    nation = "JPN",
+                    minGpa = 3.5,
+                    isExchange = true,
+                    isVisit = false,
+                    region = "아시아",
+                    availableMajor = "Engineering",
+                    location = "Tokyo, Japan",
+                    studentCount = "28,000",
+                ),
+            )
+        uni3 =
+            universityJpaRepository.save(
+                makeUniversity(
+                    nameKor = "캘리포니아주립대",
+                    nameEng = "California State University",
+                    nation = "USA",
+                    minGpa = 2.5,
+                    isExchange = false,
+                    isVisit = true,
+                    location = "Los Angeles, CA",
+                ),
+            )
+        uni4 =
+            universityJpaRepository.save(
+                makeUniversity(
+                    nameKor = "베이징대학교",
+                    nameEng = "Peking University",
+                    nation = "CHN",
+                    minGpa = 3.8,
+                    isExchange = true,
+                    isVisit = false,
+                    hasReview = true,
+                    reviewYear = "2023",
+                    region = "아시아",
+                    availableMajor = "Business, Economics",
+                    location = "Beijing, China",
+                    studentCount = "55,000",
+                ),
+            )
+        uni5 =
+            universityJpaRepository.save(
+                makeUniversity(
+                    nameKor = "멜버른대학교",
+                    nameEng = "University of Melbourne",
+                    nation = "AUS",
+                    minGpa = 2.0,
+                    isExchange = true,
+                    isVisit = false,
+                    region = "오세아니아",
+                ),
+            )
 
-        languageRequirementJpaRepository.saveAll(listOf(
-            makeLangReq(uni1.id!!, "영어", "TOEFL iBT", 80.0),
-            makeLangReq(uni1.id!!, "영어", "IELTS", 6.0),
-            makeLangReq(uni2.id!!, "일본어", "JLPT", 2.0),
-            makeLangReq(uni4.id!!, "영어", "TOEFL iBT", 100.0)
-        ))
+        languageRequirementJpaRepository.saveAll(
+            listOf(
+                makeLangReq(uni1.id!!, "영어", "TOEFL iBT", 80.0),
+                makeLangReq(uni1.id!!, "영어", "IELTS", 6.0),
+                makeLangReq(uni2.id!!, "일본어", "JLPT", 2.0),
+                makeLangReq(uni4.id!!, "영어", "TOEFL iBT", 100.0),
+            ),
+        )
     }
 
     @AfterEach
@@ -337,7 +373,7 @@ class UniversityFlowTest {
 
     @Test
     fun `TOEFL IBT 점수가 120 초과이면 400 에러가 반환된다`() {
-        val response = get<Map<String, Any?>>( "$baseUrl?TOEFL_IBT=999")
+        val response = get<Map<String, Any?>>("$baseUrl?TOEFL_IBT=999")
 
         assertThat(response.statusCode).isEqualTo(HttpStatus.BAD_REQUEST)
     }
@@ -368,6 +404,7 @@ class UniversityFlowTest {
         val response = get<Map<String, Any?>>("$baseUrl/${uni1.id}")
 
         val detail = result(response)
+
         @Suppress("UNCHECKED_CAST")
         val majors = detail["availableMajors"] as List<String>
         assertThat(majors).containsExactlyInAnyOrder("Arts and Sciences", "Business")
@@ -376,10 +413,14 @@ class UniversityFlowTest {
     @Test
     fun `상세 조회 시 courseListUrl은 availableSubject 필드 값이다`() {
         val url = "https://example.com/courses"
-        val saved = universityJpaRepository.save(makeUniversity(
-            nameKor = "URL테스트대학", nameEng = "URL Test University",
-            availableSubject = url
-        ))
+        val saved =
+            universityJpaRepository.save(
+                makeUniversity(
+                    nameKor = "URL테스트대학",
+                    nameEng = "URL Test University",
+                    availableSubject = url,
+                ),
+            )
 
         val response = get<Map<String, Any?>>("$baseUrl/${saved.id}")
 
@@ -400,6 +441,7 @@ class UniversityFlowTest {
         val response = get<Map<String, Any?>>("$baseUrl/${uni1.id}")
 
         val detail = result(response)
+
         @Suppress("UNCHECKED_CAST")
         val langReqs = detail["languageRequirements"] as List<Map<String, Any?>>
         assertThat(langReqs).hasSize(2)
@@ -412,6 +454,7 @@ class UniversityFlowTest {
         val response = get<Map<String, Any?>>("$baseUrl/${uni5.id}")
 
         val detail = result(response)
+
         @Suppress("UNCHECKED_CAST")
         val langReqs = detail["languageRequirements"] as List<*>
         assertThat(langReqs).isEmpty()
@@ -491,9 +534,10 @@ class UniversityFlowTest {
     private fun universities(response: org.springframework.http.ResponseEntity<Map<String, Any?>>) =
         (result(response)["universities"] as List<Map<String, Any?>>)
 
-    private fun universityIds(response: org.springframework.http.ResponseEntity<Map<String, Any?>>): List<Long> {
-        return universities(response).map { (it["id"] as Number).toLong() }
-    }
+    private fun universityIds(response: org.springframework.http.ResponseEntity<Map<String, Any?>>): List<Long> =
+        universities(response).map {
+            (it["id"] as Number).toLong()
+        }
 
     private fun makeUniversity(
         nameKor: String = "테스트대학",
@@ -508,7 +552,7 @@ class UniversityFlowTest {
         availableMajor: String? = null,
         availableSubject: String? = null,
         location: String? = null,
-        studentCount: String? = null
+        studentCount: String? = null,
     ) = UniversityEntity(
         semester = "2024-1",
         region = region,
@@ -524,7 +568,7 @@ class UniversityFlowTest {
         availableMajor = availableMajor,
         availableSubject = availableSubject,
         location = location,
-        studentCount = studentCount
+        studentCount = studentCount,
     )
 
     private fun makeLangReq(
@@ -532,12 +576,12 @@ class UniversityFlowTest {
         languageGroup: String,
         examType: String,
         minScore: Double,
-        levelCode: String? = null
+        levelCode: String? = null,
     ) = LanguageRequirementEntity(
         universityId = universityId,
         languageGroup = languageGroup,
         examType = examType,
         minScore = minScore,
-        levelCode = levelCode
+        levelCode = levelCode,
     )
 }

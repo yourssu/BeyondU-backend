@@ -6,7 +6,7 @@ enum class ExamType(
     val minScore: Double,
     val maxScore: Double,
     val prefix: String = "",
-    val suffix: String = ""
+    val suffix: String = "",
 ) {
     TOEFL_IBT("TOEFL_IBT", "TOEFL iBT", 0.0, 120.0),
     TOEFL_ITP("TOEFL_ITP", "TOEFL ITP", 0.0, 677.0),
@@ -17,10 +17,12 @@ enum class ExamType(
     JLPT("JLPT", "JLPT", 1.0, 5.0, prefix = "N"),
     JPT("JPT", "JPT", 0.0, 990.0),
     DELF("DELF", "DELF", 1.0, 6.0),
-    ZD("ZD", "ZD", 1.0, 6.0);
+    ZD("ZD", "ZD", 1.0, 6.0),
+    ;
 
     companion object {
         fun fromParamName(paramName: String): ExamType? = entries.find { it.paramName == paramName }
+
         fun fromDisplayName(displayName: String): ExamType? = entries.find { it.displayName == displayName }
     }
 }

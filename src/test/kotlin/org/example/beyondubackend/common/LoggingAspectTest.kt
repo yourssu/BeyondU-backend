@@ -11,7 +11,6 @@ import org.springframework.test.context.ActiveProfiles
 @SpringBootTest
 @ActiveProfiles("test")
 class LoggingAspectTest {
-
     @Autowired
     lateinit var sampleService: SampleService
 
@@ -28,15 +27,20 @@ class LoggingAspectTest {
 
 @Service
 class SampleService {
-
     @Loggable
-    fun search(keyword: String, gpa: Double): String {
+    fun search(
+        keyword: String,
+        gpa: Double,
+    ): String {
         Thread.sleep(30)
         return "result:$keyword"
     }
 
     @Loggable
-    fun login(email: String, @LogMask password: String): Boolean {
+    fun login(
+        email: String,
+        @LogMask password: String,
+    ): Boolean {
         Thread.sleep(10)
         return true
     }

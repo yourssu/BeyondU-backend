@@ -4,5 +4,5 @@ data class PageInfo(
     val currentPage: Int,
     val totalElements: Long,
     val totalPages: Int,
-    val isLast: Boolean
+    val isLast: Boolean,
 )

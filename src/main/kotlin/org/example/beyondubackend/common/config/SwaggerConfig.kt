@@ -8,20 +8,17 @@ import org.springframework.context.annotation.Configuration
 
 @Configuration
 class SwaggerConfig {
-
     @Bean
-    fun openAPI(): OpenAPI {
-        return OpenAPI()
+    fun openAPI(): OpenAPI =
+        OpenAPI()
             .info(
                 Info()
                     .title("Beyond-U API")
                     .version("v1.0.0")
-                    .description("교환학생 준비 관리 플랫폼 API 문서")
-            )
-            .servers(
+                    .description("교환학생 준비 관리 플랫폼 API 문서"),
+            ).servers(
                 listOf(
-                    Server().url("/").description("Current Server")
-                )
+                    Server().url("/").description("Current Server"),
+                ),
             )
-    }
 }

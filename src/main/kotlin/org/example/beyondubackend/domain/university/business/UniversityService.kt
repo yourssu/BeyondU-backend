@@ -6,8 +6,10 @@ import org.example.beyondubackend.domain.university.business.query.UniversityQue
 import org.springframework.data.domain.Pageable
 
 interface UniversityService {
-
-    fun getUniversities(query: UniversityQuery, pageable: Pageable): UniversityListResponse
+    fun getUniversities(
+        query: UniversityQuery,
+        pageable: Pageable,
+    ): UniversityListResponse
 
     fun getUniversityDetail(id: Long): UniversityDetailResponse
 }

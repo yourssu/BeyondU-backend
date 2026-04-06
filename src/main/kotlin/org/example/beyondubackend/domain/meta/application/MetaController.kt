@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/v1/meta")
 class MetaController {
-
     @Operation(summary = "국가 목록 조회", description = "university 필터링에 사용 가능한 국가 목록을 반환합니다.")
     @GetMapping("/nations")
     fun getNations(): ResponseEntity<ApiResponse<List<String>>> {

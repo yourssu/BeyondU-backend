@@ -9,5 +9,5 @@ data class UniversityQuery(
     val gpa: Double? = null,
     val major: String? = null,
     val hasReview: Boolean? = null,
-    val examScores: Map<String, Double> = emptyMap()
+    val examScores: Map<String, Double> = emptyMap(),
 )
