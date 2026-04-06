@@ -1,6 +1,7 @@
 package org.example.beyondubackend.domain.university.business.dto
 
 import org.example.beyondubackend.domain.university.implement.University
+import java.util.Base64
 
 data class UniversityDetailResponse(
     val id: Long,
@@ -46,7 +47,10 @@ data class UniversityDetailResponse(
                 programType = programType,
                 badge = university.badge,
                 hasReview = university.hasReview,
-                reviewReportUrl = null, // TODO #38: hasReview=true일 때 Base64(nameEng) URL 생성
+                reviewReportUrl = if (university.hasReview) {
+                    val encoded = Base64.getEncoder().encodeToString(university.nameEng.toByteArray(Charsets.UTF_8))
+                    "https://study.ssu.ac.kr/community/exp_list.do?searchVal=$encoded&siteCd=01&boardCd=07"
+                } else null,
                 minGpa = university.minGpa,
                 websiteUrl = university.websiteUrl,
                 significantNote = university.significantNote,
