@@ -20,7 +20,8 @@ class UniversityRepositoryImpl(
 ) : UniversityRepository {
     override fun findAllWithFilters(
         nations: List<String>?,
-        region: String?,
+        regions: List<String>?,
+        languageGroups: List<String>?,
         isExchange: Boolean?,
         isVisit: Boolean?,
         search: String?,
@@ -35,7 +36,8 @@ class UniversityRepositoryImpl(
                 .selectFrom(universityEntity)
                 .where(
                     nationsIn(nations),
-                    regionEq(region),
+                    regionsIn(regions),
+                    languageGroupsIn(languageGroups),
                     isExchangeEq(isExchange),
                     isVisitEq(isVisit),
                     searchKeyword(search),
@@ -70,7 +72,8 @@ class UniversityRepositoryImpl(
                 .from(universityEntity)
                 .where(
                     nationsIn(nations),
-                    regionEq(region),
+                    regionsIn(regions),
+                    languageGroupsIn(languageGroups),
                     isExchangeEq(isExchange),
                     isVisitEq(isVisit),
                     searchKeyword(search),
@@ -91,7 +94,21 @@ class UniversityRepositoryImpl(
                 it.isNotEmpty()
             }?.let { universityEntity.nation.`in`(it) }
 
-    private fun regionEq(region: String?): BooleanExpression? = region?.let { universityEntity.region.eq(it) }
+    private fun regionsIn(regions: List<String>?): BooleanExpression? =
+        regions
+            ?.takeIf { it.isNotEmpty() }
+            ?.let { universityEntity.region.`in`(it) }
+
+    private fun languageGroupsIn(languageGroups: List<String>?): BooleanExpression? {
+        if (languageGroups.isNullOrEmpty()) return null
+        return JPAExpressions
+            .selectOne()
+            .from(languageRequirementEntity)
+            .where(
+                languageRequirementEntity.universityId.eq(universityEntity.id),
+                languageRequirementEntity.languageGroup.`in`(languageGroups),
+            ).exists()
+    }
 
     private fun isExchangeEq(isExchange: Boolean?): BooleanExpression? = isExchange?.let { universityEntity.isExchange.eq(it) }
 

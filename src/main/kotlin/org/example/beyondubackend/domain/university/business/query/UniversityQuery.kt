@@ -2,7 +2,8 @@ package org.example.beyondubackend.domain.university.business.query
 
 data class UniversityQuery(
     val nations: List<String>? = null,
-    val region: String? = null,
+    val regions: List<String>? = null,
+    val languageGroups: List<String>? = null,
     val isExchange: Boolean? = null,
     val isVisit: Boolean? = null,
     val search: String? = null,

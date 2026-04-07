@@ -24,7 +24,8 @@ class UniversityServiceImpl(
         val universityPage =
             universityReader.getUniversitiesWithFilters(
                 nations = query.nations,
-                region = query.region,
+                regions = query.regions,
+                languageGroups = query.languageGroups,
                 isExchange = query.isExchange,
                 isVisit = query.isVisit,
                 search = query.search,
@@ -35,10 +36,8 @@ class UniversityServiceImpl(
                 pageable = pageable,
             )
 
-        // 대학 ID 목록 추출
-        val universityIds = universityPage.content.map { it.id!! }
+        val universityIds = universityPage.content.mapNotNull { it.id }
 
-        // 언어 요구사항 일괄 조회
         val languageRequirementsMap =
             if (universityIds.isNotEmpty()) {
                 languageRequirementReader.findByUniversityIds(universityIds)
@@ -46,7 +45,6 @@ class UniversityServiceImpl(
                 emptyMap()
             }
 
-        // DTO 변환 (languageRequirementSummary 포함)
         val universities =
             universityPage.content.map { university ->
                 val requirements = languageRequirementsMap[university.id] ?: emptyList()
