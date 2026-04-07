@@ -33,11 +33,11 @@ class UniversityFlowTest {
     private val baseUrl get() = "http://localhost:$port/api/v1/universities"
 
     // ── 픽스처 ──────────────────────────────────────────────────────────────
-    // uni1: USA, GPA 3.0, 교환, TOEFL iBT 80 / IELTS 6.0, 후기 있음
-    // uni2: JPN, GPA 3.5, 교환, JLPT N2(minScore=2)
-    // uni3: USA, GPA 2.5, 방문, 어학 요구사항 없음
-    // uni4: CHN, GPA 3.8, 교환, TOEFL iBT 100, 후기 있음
-    // uni5: AUS, GPA 2.0, 교환, 어학 요구사항 없음
+    // uni1: 미국, GPA 3.0, 교환, TOEFL iBT 80 / IELTS 6.0, 후기 있음
+    // uni2: 일본, GPA 3.5, 교환, JLPT N2(minScore=2)
+    // uni3: 미국, GPA 2.5, 방문, 어학 요구사항 없음
+    // uni4: 중국, GPA 3.8, 교환, TOEFL iBT 100, 후기 있음
+    // uni5: 호주, GPA 2.0, 교환, 어학 요구사항 없음
 
     private lateinit var uni1: UniversityEntity
     private lateinit var uni2: UniversityEntity
@@ -55,7 +55,7 @@ class UniversityFlowTest {
                 makeUniversity(
                     nameKor = "하버드대학교",
                     nameEng = "Harvard University",
-                    nation = "USA",
+                    nation = "미국",
                     minGpa = 3.0,
                     isExchange = true,
                     isVisit = false,
@@ -71,7 +71,7 @@ class UniversityFlowTest {
                 makeUniversity(
                     nameKor = "도쿄대학교",
                     nameEng = "University of Tokyo",
-                    nation = "JPN",
+                    nation = "일본",
                     minGpa = 3.5,
                     isExchange = true,
                     isVisit = false,
@@ -86,7 +86,7 @@ class UniversityFlowTest {
                 makeUniversity(
                     nameKor = "캘리포니아주립대",
                     nameEng = "California State University",
-                    nation = "USA",
+                    nation = "미국",
                     minGpa = 2.5,
                     isExchange = false,
                     isVisit = true,
@@ -98,7 +98,7 @@ class UniversityFlowTest {
                 makeUniversity(
                     nameKor = "베이징대학교",
                     nameEng = "Peking University",
-                    nation = "CHN",
+                    nation = "중국",
                     minGpa = 3.8,
                     isExchange = true,
                     isVisit = false,
@@ -115,7 +115,7 @@ class UniversityFlowTest {
                 makeUniversity(
                     nameKor = "멜버른대학교",
                     nameEng = "University of Melbourne",
-                    nation = "AUS",
+                    nation = "호주",
                     minGpa = 2.0,
                     isExchange = true,
                     isVisit = false,
@@ -125,10 +125,10 @@ class UniversityFlowTest {
 
         languageRequirementJpaRepository.saveAll(
             listOf(
-                makeLangReq(uni1.id!!, "영어", "TOEFL iBT", 80.0),
-                makeLangReq(uni1.id!!, "영어", "IELTS", 6.0),
-                makeLangReq(uni2.id!!, "일본어", "JLPT", 2.0),
-                makeLangReq(uni4.id!!, "영어", "TOEFL iBT", 100.0),
+                makeLangReq(uni1.id!!, "ENGLISH", "TOEFL iBT", 80.0),
+                makeLangReq(uni1.id!!, "ENGLISH", "IELTS", 6.0),
+                makeLangReq(uni2.id!!, "JAPANESE", "JLPT", 2.0),
+                makeLangReq(uni4.id!!, "ENGLISH", "TOEFL iBT", 100.0),
             ),
         )
     }
@@ -230,24 +230,24 @@ class UniversityFlowTest {
     // ── 전체 조회: 국가 + GPA + 어학 복합 필터 ─────────────────────────────
 
     @Test
-    fun `나라 USA + GPA 3점5 + TOEFL IBT 80점 조합 시 조건 모두 충족하는 미국 대학만 반환된다`() {
-        val response = get<Map<String, Any?>>("$baseUrl?nations=USA&gpa=3.5&TOEFL_IBT=80")
+    fun `나라 미국 + GPA 3점5 + TOEFL IBT 80점 조합 시 조건 모두 충족하는 미국 대학만 반환된다`() {
+        val response = get<Map<String, Any?>>("$baseUrl?nations=미국&gpa=3.5&TOEFL_IBT=80")
 
         val ids = universityIds(response)
-        // USA: uni1, uni3 / GPA: uni1(3.0), uni3(2.5) / 어학: uni1 TOEFL 충족, uni3 없음
+        // 미국: uni1, uni3 / GPA: uni1(3.0), uni3(2.5) / 어학: uni1 TOEFL 충족, uni3 없음
         assertThat(ids).containsExactlyInAnyOrder(uni1.id, uni3.id)
     }
 
     @Test
-    fun `나라 USA + GPA 3점5 + 어학 2개(OR) 조합 시 미국 대학 중 조건 충족 반환`() {
-        val response = get<Map<String, Any?>>("$baseUrl?nations=USA&gpa=3.5&TOEFL_IBT=80&IELTS=6.0")
+    fun `나라 미국 + GPA 3점5 + 어학 2개(OR) 조합 시 미국 대학 중 조건 충족 반환`() {
+        val response = get<Map<String, Any?>>("$baseUrl?nations=미국&gpa=3.5&TOEFL_IBT=80&IELTS=6.0")
 
         val ids = universityIds(response)
         assertThat(ids).containsExactlyInAnyOrder(uni1.id, uni3.id)
     }
 
     @Test
-    fun `유효하지 않은 nations 코드 JPN 사용 시 400 에러가 반환된다`() {
+    fun `Nation enum에 존재하지 않는 국가명 JPN 사용 시 400 에러가 반환된다`() {
         val response = get<Map<String, Any?>>("$baseUrl?nations=JPN&gpa=4.0&JLPT=2")
 
         assertThat(response.statusCode).isEqualTo(HttpStatus.BAD_REQUEST)
@@ -277,8 +277,8 @@ class UniversityFlowTest {
     // ── 전체 조회: 기타 단독 필터 ──────────────────────────────────────────
 
     @Test
-    fun `국가 USA 필터 시 미국 대학만 반환된다`() {
-        val response = get<Map<String, Any?>>("$baseUrl?nations=USA")
+    fun `국가 미국 필터 시 미국 대학만 반환된다`() {
+        val response = get<Map<String, Any?>>("$baseUrl?nations=미국")
 
         val ids = universityIds(response)
         assertThat(ids).containsExactlyInAnyOrder(uni1.id, uni3.id)
@@ -338,7 +338,7 @@ class UniversityFlowTest {
 
     @Test
     fun `일치하는 대학이 없으면 빈 리스트와 totalElements 0이 반환된다`() {
-        val response = get<Map<String, Any?>>("$baseUrl?nations=GERMANY")
+        val response = get<Map<String, Any?>>("$baseUrl?nations=영국")
 
         assertThat(response.statusCode).isEqualTo(HttpStatus.OK)
         val result = result(response)
@@ -482,22 +482,23 @@ class UniversityFlowTest {
 
     @Test
     fun `nations 단일 값은 해당 국가 대학만 반환된다`() {
-        val response = get<Map<String, Any?>>("$baseUrl?nations=USA")
+        val response = get<Map<String, Any?>>("$baseUrl?nations=미국")
 
         val ids = universityIds(response)
         assertThat(ids).containsExactlyInAnyOrder(uni1.id, uni3.id)
     }
 
     @Test
-    fun `유효하지 않은 nations 코드 JPN 포함 시 400 에러가 반환된다`() {
-        val response = get<Map<String, Any?>>("$baseUrl?nations=USA&nations=JPN")
+    fun `nations 복수 OR 조건으로 미국과 일본 필터 시 해당 대학들이 반환된다`() {
+        val response = get<Map<String, Any?>>("$baseUrl?nations=미국&nations=일본")
 
-        assertThat(response.statusCode).isEqualTo(HttpStatus.BAD_REQUEST)
+        val ids = universityIds(response)
+        assertThat(ids).containsExactlyInAnyOrder(uni1.id, uni2.id, uni3.id)
     }
 
     @Test
-    fun `유효하지 않은 nations 코드 AUS 포함 시 400 에러가 반환된다`() {
-        val response = get<Map<String, Any?>>("$baseUrl?nations=USA&nations=JPN&nations=AUS")
+    fun `Nation enum에 존재하지 않는 국가명 사용 시 400 에러가 반환된다`() {
+        val response = get<Map<String, Any?>>("$baseUrl?nations=없는나라")
 
         assertThat(response.statusCode).isEqualTo(HttpStatus.BAD_REQUEST)
     }
@@ -506,18 +507,52 @@ class UniversityFlowTest {
     // 픽스처 region: uni1/uni3=미주, uni2/uni4=아시아, uni5=오세아니아
 
     @Test
-    fun `유효하지 않은 region 이름 사용 시 400 에러가 반환된다`() {
-        val response = get<Map<String, Any?>>("$baseUrl?region=없는대륙")
+    fun `유효하지 않은 regions 이름 사용 시 400 에러가 반환된다`() {
+        val response = get<Map<String, Any?>>("$baseUrl?regions=없는대륙")
 
         assertThat(response.statusCode).isEqualTo(HttpStatus.BAD_REQUEST)
     }
 
     @Test
-    fun `region 아시아 필터 시 아시아 대학만 반환된다`() {
-        val response = get<Map<String, Any?>>("$baseUrl?region=아시아")
+    fun `regions 아시아 필터 시 아시아 대학만 반환된다`() {
+        val response = get<Map<String, Any?>>("$baseUrl?regions=아시아")
 
         val ids = universityIds(response)
         assertThat(ids).containsExactlyInAnyOrder(uni2.id, uni4.id)
+    }
+
+    @Test
+    fun `regions 복수 OR 조건으로 아시아와 오세아니아 필터 시 해당 대학들이 반환된다`() {
+        val response = get<Map<String, Any?>>("$baseUrl?regions=아시아&regions=오세아니아")
+
+        val ids = universityIds(response)
+        assertThat(ids).containsExactlyInAnyOrder(uni2.id, uni4.id, uni5.id)
+    }
+
+    // ── 전체 조회: 언어권 필터 (#37) ────────────────────────────────────────
+    // 픽스처 languageGroup: uni1/uni4=ENGLISH, uni2=JAPANESE, uni3/uni5=어학 요구사항 없음
+
+    @Test
+    fun `언어권 필터 ENGLISH 단일 선택 시 ENGLISH 어학 요구사항이 있는 대학만 반환된다`() {
+        val response = get<Map<String, Any?>>("$baseUrl?languageGroups=ENGLISH")
+
+        val ids = universityIds(response)
+        assertThat(ids).containsExactlyInAnyOrder(uni1.id, uni4.id)
+    }
+
+    @Test
+    fun `언어권 필터 ENGLISH JAPANESE 복수 선택 시 둘 중 하나라도 있는 대학이 반환된다`() {
+        val response = get<Map<String, Any?>>("$baseUrl?languageGroups=ENGLISH&languageGroups=JAPANESE")
+
+        val ids = universityIds(response)
+        assertThat(ids).containsExactlyInAnyOrder(uni1.id, uni2.id, uni4.id)
+    }
+
+    @Test
+    fun `유효하지 않은 언어권 코드 KOREAN 사용 시 400 에러가 반환된다`() {
+        val response = get<Map<String, Any?>>("$baseUrl?languageGroups=KOREAN")
+
+        assertThat(response.statusCode).isEqualTo(HttpStatus.BAD_REQUEST)
     }
 
     // ── 헬퍼 ────────────────────────────────────────────────────────────────
@@ -542,7 +577,7 @@ class UniversityFlowTest {
     private fun makeUniversity(
         nameKor: String = "테스트대학",
         nameEng: String = "Test University",
-        nation: String = "USA",
+        nation: String = "미국",
         minGpa: Double = 3.0,
         isExchange: Boolean = true,
         isVisit: Boolean = false,
