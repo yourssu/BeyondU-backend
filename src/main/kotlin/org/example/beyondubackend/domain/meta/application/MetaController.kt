@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.example.beyondubackend.common.dto.ApiResponse
 import org.example.beyondubackend.common.enums.ExamType
+import org.example.beyondubackend.common.enums.LanguageGroup
 import org.example.beyondubackend.common.enums.Nation
 import org.example.beyondubackend.common.enums.Region
 import org.example.beyondubackend.domain.meta.application.dto.ExamTypeResponse
@@ -28,6 +29,13 @@ class MetaController {
     fun getRegions(): ResponseEntity<ApiResponse<List<String>>> {
         val regions = Region.entries.map { it.displayName }
         return ApiResponse.success(regions)
+    }
+
+    @Operation(summary = "언어권 목록 조회", description = "university 필터링에 사용 가능한 언어권 목록을 반환합니다.")
+    @GetMapping("/language-groups")
+    fun getLanguageGroups(): ResponseEntity<ApiResponse<List<String>>> {
+        val languageGroups = LanguageGroup.entries.map { it.name }
+        return ApiResponse.success(languageGroups)
     }
 
     @Operation(summary = "어학 시험 목록 조회", description = "지원하는 어학 시험 종류와 점수 범위를 반환합니다.")

@@ -6,7 +6,8 @@ import org.springframework.data.domain.Pageable
 interface UniversityRepository {
     fun findAllWithFilters(
         nations: List<String>?,
-        region: String?,
+        regions: List<String>?,
+        languageGroups: List<String>?,
         isExchange: Boolean?,
         isVisit: Boolean?,
         search: String?,
