@@ -42,4 +42,6 @@ class UniversityReader(
     fun getUniversityById(id: Long): University =
         universityRepository.findById(id)
             ?: throw BusinessException(ErrorCode.UNIVERSITY_NOT_FOUND)
+
+    fun getDistinctRegionAndNation(): List<Array<String>> = universityRepository.findDistinctRegionAndNation()
 }

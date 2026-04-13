@@ -20,4 +20,6 @@ interface UniversityRepository {
     ): Page<University>
 
     fun findById(id: Long): University?
+
+    fun findDistinctRegionAndNation(): List<Array<String>>
 }

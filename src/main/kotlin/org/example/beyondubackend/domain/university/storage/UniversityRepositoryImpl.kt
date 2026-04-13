@@ -92,6 +92,8 @@ class UniversityRepositoryImpl(
 
     override fun findById(id: Long): University? = universityJpaRepository.findById(id).orElse(null)?.toDomain()
 
+    override fun findDistinctRegionAndNation(): List<Array<String>> = universityJpaRepository.findDistinctRegionAndNation()
+
     private fun nationsIn(nations: List<String>?): BooleanExpression? =
         nations
             ?.takeIf {
@@ -132,7 +134,7 @@ class UniversityRepositoryImpl(
     private fun majorsContains(majors: List<String>?): BooleanExpression? {
         if (majors.isNullOrEmpty()) return null
         val keywords = majors
-            .mapNotNull { name -> SubMajor.entries.find { it.displayName == name } }
+            .mapNotNull { enumName -> SubMajor.entries.find { it.name == enumName } }
             .flatMap { it.dbKeywords }
             .distinct()
         if (keywords.isEmpty()) return null
