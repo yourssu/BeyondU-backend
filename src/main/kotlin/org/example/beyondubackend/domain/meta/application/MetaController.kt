@@ -5,9 +5,10 @@ import io.swagger.v3.oas.annotations.tags.Tag
 import org.example.beyondubackend.common.dto.ApiResponse
 import org.example.beyondubackend.common.enums.ExamType
 import org.example.beyondubackend.common.enums.LanguageGroup
-import org.example.beyondubackend.common.enums.Nation
 import org.example.beyondubackend.common.enums.Region
 import org.example.beyondubackend.domain.meta.application.dto.ExamTypeResponse
+import org.example.beyondubackend.domain.meta.application.dto.NationsByRegionResponse
+import org.example.beyondubackend.domain.university.storage.UniversityJpaRepository
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
@@ -16,12 +17,24 @@ import org.springframework.web.bind.annotation.RestController
 @Tag(name = "Meta", description = "공통 코드 조회 API")
 @RestController
 @RequestMapping("/api/v1/meta")
-class MetaController {
-    @Operation(summary = "국가 목록 조회", description = "university 필터링에 사용 가능한 국가 목록을 반환합니다.")
+class MetaController(
+    private val universityJpaRepository: UniversityJpaRepository,
+) {
+    @Operation(summary = "국가 목록 조회 (지역별 그룹핑)", description = "대륙별로 그룹핑된 국가 목록을 반환합니다.")
     @GetMapping("/nations")
-    fun getNations(): ResponseEntity<ApiResponse<List<String>>> {
-        val nations = Nation.entries.map { it.displayName }
-        return ApiResponse.success(nations)
+    fun getNations(): ResponseEntity<ApiResponse<List<NationsByRegionResponse>>> {
+        val regionOrder = Region.entries.map { it.displayName }
+        val grouped = universityJpaRepository.findDistinctRegionAndNation()
+            .groupBy { it[0] }
+            .entries
+            .sortedBy { (region, _) -> regionOrder.indexOf(region).takeIf { it >= 0 } ?: Int.MAX_VALUE }
+            .map { (region, pairs) ->
+                NationsByRegionResponse(
+                    region = region,
+                    nations = pairs.map { it[1] },
+                )
+            }
+        return ApiResponse.success(grouped)
     }
 
     @Operation(summary = "대륙 목록 조회", description = "university 필터링에 사용 가능한 대륙 목록을 반환합니다.")
