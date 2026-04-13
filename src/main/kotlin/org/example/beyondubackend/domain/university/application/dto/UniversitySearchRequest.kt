@@ -5,6 +5,7 @@ import org.example.beyondubackend.common.code.ErrorCode
 import org.example.beyondubackend.common.enums.LanguageGroup
 import org.example.beyondubackend.common.enums.Nation
 import org.example.beyondubackend.common.enums.Region
+import org.example.beyondubackend.common.enums.SubMajor
 import org.example.beyondubackend.common.exception.BusinessException
 import org.example.beyondubackend.domain.university.business.query.UniversityQuery
 
@@ -26,8 +27,10 @@ data class  UniversitySearchRequest(
     val search: String? = null,
     @Schema(description = "최소 GPA (입력한 GPA 이상 지원 가능한 학교 조회)", example = "3.5")
     val gpa: Double? = null,
-    @Schema(description = "전공 필터")
+    @Schema(description = "전공 필터 단일값 (하위 호환, 예: ?major=Computer Science)")
     val major: String? = null,
+    @Schema(description = "전공 필터 복수값 (예: ?majors=Computer Science / Software Engineering&majors=Accounting / Finance)")
+    val majors: List<String>? = null,
     @Schema(description = "후기 보유 여부")
     val hasReview: Boolean? = null,
 ) {
@@ -42,6 +45,7 @@ data class  UniversitySearchRequest(
         validateNations(mergedNations)
         validateRegions(regions)
         validateLanguageGroups(languageGroups)
+        validateMajors(majors)
 
         return UniversityQuery(
             nations = mergedNations,
@@ -52,6 +56,7 @@ data class  UniversitySearchRequest(
             search = search,
             gpa = gpa,
             major = major,
+            majors = majors,
             hasReview = hasReview,
             examScores = examScores,
         )
@@ -81,6 +86,15 @@ data class  UniversitySearchRequest(
         val invalid = languageGroups.filter { it !in validNames }
         if (invalid.isNotEmpty()) {
             throw BusinessException(ErrorCode.INVALID_INPUT, "유효하지 않은 언어권: ${invalid.joinToString()}")
+        }
+    }
+
+    private fun validateMajors(majors: List<String>?) {
+        if (majors.isNullOrEmpty()) return
+        val validNames = SubMajor.entries.map { it.displayName }.toSet()
+        val invalid = majors.filter { it !in validNames }
+        if (invalid.isNotEmpty()) {
+            throw BusinessException(ErrorCode.INVALID_INPUT, "유효하지 않은 전공: ${invalid.joinToString()}")
         }
     }
 }

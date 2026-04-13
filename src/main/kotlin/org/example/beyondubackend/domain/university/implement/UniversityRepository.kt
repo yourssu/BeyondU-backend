@@ -13,6 +13,7 @@ interface UniversityRepository {
         search: String?,
         gpa: Double?,
         major: String?,
+        majors: List<String>?,
         hasReview: Boolean?,
         examScores: Map<String, Double>,
         pageable: Pageable,

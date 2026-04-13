@@ -4,6 +4,7 @@ import com.querydsl.core.types.dsl.BooleanExpression
 import com.querydsl.jpa.JPAExpressions
 import com.querydsl.jpa.impl.JPAQueryFactory
 import org.example.beyondubackend.common.enums.ExamType
+import org.example.beyondubackend.common.enums.SubMajor
 import org.example.beyondubackend.domain.languagerequirement.storage.QLanguageRequirementEntity.languageRequirementEntity
 import org.example.beyondubackend.domain.university.implement.University
 import org.example.beyondubackend.domain.university.implement.UniversityRepository
@@ -27,6 +28,7 @@ class UniversityRepositoryImpl(
         search: String?,
         gpa: Double?,
         major: String?,
+        majors: List<String>?,
         hasReview: Boolean?,
         examScores: Map<String, Double>,
         pageable: Pageable,
@@ -43,6 +45,7 @@ class UniversityRepositoryImpl(
                     searchKeyword(search),
                     gpaLoe(gpa),
                     majorContains(major),
+                    majorsContains(majors),
                     hasReviewEq(hasReview),
                     examScoresMatch(examScores),
                 ).offset(pageable.offset)
@@ -79,6 +82,7 @@ class UniversityRepositoryImpl(
                     searchKeyword(search),
                     gpaLoe(gpa),
                     majorContains(major),
+                    majorsContains(majors),
                     hasReviewEq(hasReview),
                     examScoresMatch(examScores),
                 ).fetchOne() ?: 0L
@@ -124,6 +128,18 @@ class UniversityRepositoryImpl(
     private fun gpaLoe(gpa: Double?): BooleanExpression? = gpa?.let { universityEntity.minGpa.loe(it) }
 
     private fun majorContains(major: String?): BooleanExpression? = major?.let { universityEntity.availableMajor.contains(it) }
+
+    private fun majorsContains(majors: List<String>?): BooleanExpression? {
+        if (majors.isNullOrEmpty()) return null
+        val keywords = majors
+            .mapNotNull { name -> SubMajor.entries.find { it.displayName == name } }
+            .flatMap { it.dbKeywords }
+            .distinct()
+        if (keywords.isEmpty()) return null
+        return keywords
+            .map { universityEntity.availableMajor.contains(it) }
+            .reduce { acc, expr -> acc.or(expr) }
+    }
 
     private fun hasReviewEq(hasReview: Boolean?): BooleanExpression? = hasReview?.let { universityEntity.hasReview.eq(it) }
 

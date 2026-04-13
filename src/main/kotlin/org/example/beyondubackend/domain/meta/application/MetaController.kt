@@ -3,11 +3,11 @@ package org.example.beyondubackend.domain.meta.application
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.example.beyondubackend.common.dto.ApiResponse
-import org.example.beyondubackend.common.enums.ExamType
-import org.example.beyondubackend.common.enums.LanguageGroup
-import org.example.beyondubackend.common.enums.Region
+import org.example.beyondubackend.common.enums.*
 import org.example.beyondubackend.domain.meta.application.dto.ExamTypeResponse
+import org.example.beyondubackend.domain.meta.application.dto.MajorCategoryResponse
 import org.example.beyondubackend.domain.meta.application.dto.NationsByRegionResponse
+import org.example.beyondubackend.domain.meta.application.dto.SubMajorResponse
 import org.example.beyondubackend.domain.university.storage.UniversityJpaRepository
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
@@ -35,6 +35,29 @@ class MetaController(
                 )
             }
         return ApiResponse.success(grouped)
+    }
+
+    @Operation(summary = "전공 목록 조회 (카테고리별 그룹핑)", description = "카테고리별로 그룹핑된 전공 목록을 반환합니다.")
+    @GetMapping("/majors")
+    fun getMajors(): ResponseEntity<ApiResponse<List<MajorCategoryResponse>>> {
+        val koreanMajorsBySubMajor = KoreanMajor.entries
+            .flatMap { km -> km.subMajors.map { sub -> sub to km.displayName } }
+            .groupBy({ it.first }, { it.second })
+
+        val result = MajorCategory.entries.map { cat ->
+            MajorCategoryResponse(
+                category = cat.displayName,
+                majors = SubMajor.entries
+                    .filter { it.category == cat }
+                    .map { sub ->
+                        SubMajorResponse(
+                            name = sub.displayName,
+                            koreanMajors = koreanMajorsBySubMajor[sub] ?: emptyList(),
+                        )
+                    },
+            )
+        }
+        return ApiResponse.success(result)
     }
 
     @Operation(summary = "대륙 목록 조회", description = "university 필터링에 사용 가능한 대륙 목록을 반환합니다.")
