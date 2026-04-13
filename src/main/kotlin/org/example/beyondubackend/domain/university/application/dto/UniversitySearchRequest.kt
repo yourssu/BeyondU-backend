@@ -29,7 +29,7 @@ data class  UniversitySearchRequest(
     val gpa: Double? = null,
     @Schema(description = "전공 필터 단일값 (하위 호환, 예: ?major=Computer Science)")
     val major: String? = null,
-    @Schema(description = "전공 필터 복수값 (예: ?majors=Computer Science / Software Engineering&majors=Accounting / Finance)")
+    @Schema(description = "전공 필터 복수값 (예: ?majors=COMPUTER_SCIENCE&majors=ACCOUNTING)", example = "COMPUTER_SCIENCE")
     val majors: List<String>? = null,
     @Schema(description = "후기 보유 여부")
     val hasReview: Boolean? = null,
@@ -91,7 +91,7 @@ data class  UniversitySearchRequest(
 
     private fun validateMajors(majors: List<String>?) {
         if (majors.isNullOrEmpty()) return
-        val validNames = SubMajor.entries.map { it.displayName }.toSet()
+        val validNames = SubMajor.entries.map { it.name }.toSet()
         val invalid = majors.filter { it !in validNames }
         if (invalid.isNotEmpty()) {
             throw BusinessException(ErrorCode.INVALID_INPUT, "유효하지 않은 전공: ${invalid.joinToString()}")
