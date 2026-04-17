@@ -1,0 +1,40 @@
+package org.example.beyondubackend.common.enums
+
+import org.example.beyondubackend.common.enums.MajorCategory.*
+
+enum class SubMajor(
+    val displayName: String,
+    val category: MajorCategory,
+    val dbKeywords: List<String>,
+) {
+    BUSINESS_ADMIN("Business / Business Administration", BUSINESS, listOf("Business", "Business Administration")),
+    ACCOUNTING("Accounting / Finance", BUSINESS, listOf("Accounting", "Finance")),
+    ECONOMICS("Economics / Business and Economics", BUSINESS, listOf("Economics", "Business and Economics")),
+    INTERNATIONAL_BUSINESS("International Business", BUSINESS, listOf("International Business")),
+    MANAGEMENT("Management / Marketing", BUSINESS, listOf("Management", "Marketing")),
+    COMPUTER_SCIENCE("Computer Science / Software Engineering", IT_ENGINEERING, listOf("Computer Science", "Software Engineering")),
+    INFORMATION_TECHNOLOGY("Information Technology", IT_ENGINEERING, listOf("Information Technology")),
+    ELECTRICAL_ENGINEERING("Electrical Engineering", IT_ENGINEERING, listOf("Electrical Engineering")),
+    MECHANICAL_ENGINEERING("Mechanical Engineering", IT_ENGINEERING, listOf("Mechanical Engineering")),
+    INDUSTRIAL_ENGINEERING("Industrial Engineering", IT_ENGINEERING, listOf("Industrial Engineering")),
+    ARCHITECTURE("Architecture", IT_ENGINEERING, listOf("Architecture")),
+    LAW("Law / Law and Social Sciences", HUMANITIES_SOCIAL_LAW, listOf("Law", "Law and Social Sciences")),
+    COMMUNICATION("Communication", HUMANITIES_SOCIAL_LAW, listOf("Communication")),
+    INTERNATIONAL_STUDIES("International Studies", HUMANITIES_SOCIAL_LAW, listOf("International Studies")),
+    HISTORY("History", HUMANITIES_SOCIAL_LAW, listOf("History")),
+    THEOLOGY("Theology", HUMANITIES_SOCIAL_LAW, listOf("Theology")),
+    LANGUAGES("Languages / Literature / Letters", HUMANITIES_SOCIAL_LAW, listOf("Languages", "Literature", "Letters")),
+    SOCIAL_SCIENCES("Social Sciences", HUMANITIES_SOCIAL_LAW, listOf("Social Sciences")),
+    PSYCHOLOGY("Psychology", HUMANITIES_SOCIAL_LAW, listOf("Psychology")),
+    MATHEMATICS_SCIENCE("Mathematics / Science", SCIENCES_ARTS, listOf("Mathematics", "Science")),
+    LIFE_SCIENCES("Life Sciences", SCIENCES_ARTS, listOf("Life Sciences")),
+    DESIGN("Design / Fine Arts / Arts", SCIENCES_ARTS, listOf("Design", "Fine Arts", "Arts")),
+    EDUCATION("Education", SCIENCES_ARTS, listOf("Education")),
+    AGRICULTURE("Agriculture", OTHER, listOf("Agriculture")),
+    PHARMACY("Pharmacy", OTHER, listOf("Pharmacy")),
+    NURSING("Nursing", OTHER, listOf("Nursing")),
+    MEDICINE("Medicine", OTHER, listOf("Medicine")),
+    FOREIGN_STUDIES("Foreign Studies", OTHER, listOf("Foreign Studies")),
+    LIBERAL_ARTS("Liberal Arts / Arts and Sciences", OTHER, listOf("Liberal Arts", "Arts and Sciences")),
+    TOURISM("Tourism and Hospitality", OTHER, listOf("Tourism and Hospitality")),
+}
