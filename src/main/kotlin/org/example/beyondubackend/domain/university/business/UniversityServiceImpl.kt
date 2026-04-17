@@ -31,6 +31,7 @@ class UniversityServiceImpl(
                 search = query.search,
                 gpa = query.gpa,
                 major = query.major,
+                majors = query.majors,
                 hasReview = query.hasReview,
                 examScores = query.examScores,
                 pageable = pageable,

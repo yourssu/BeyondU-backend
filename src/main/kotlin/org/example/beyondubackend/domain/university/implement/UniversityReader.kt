@@ -19,6 +19,7 @@ class UniversityReader(
         search: String?,
         gpa: Double?,
         major: String?,
+        majors: List<String>?,
         hasReview: Boolean?,
         examScores: Map<String, Double>,
         pageable: Pageable,
@@ -32,6 +33,7 @@ class UniversityReader(
             search,
             gpa,
             major,
+            majors,
             hasReview,
             examScores,
             pageable,
@@ -40,4 +42,6 @@ class UniversityReader(
     fun getUniversityById(id: Long): University =
         universityRepository.findById(id)
             ?: throw BusinessException(ErrorCode.UNIVERSITY_NOT_FOUND)
+
+    fun getDistinctRegionAndNation(): List<Array<String>> = universityRepository.findDistinctRegionAndNation()
 }
