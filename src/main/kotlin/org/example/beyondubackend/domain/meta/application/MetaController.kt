@@ -8,7 +8,6 @@ import org.example.beyondubackend.common.enums.LanguageGroup
 import org.example.beyondubackend.common.enums.Region
 import org.example.beyondubackend.domain.meta.application.dto.ExamTypeResponse
 import org.example.beyondubackend.domain.meta.application.dto.MajorCategoryResponse
-import org.example.beyondubackend.domain.meta.application.dto.NationsByRegionResponse
 import org.example.beyondubackend.domain.meta.business.MetaService
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
@@ -21,10 +20,11 @@ import org.springframework.web.bind.annotation.RestController
 class MetaController(
     private val metaService: MetaService,
 ) {
-    @Operation(summary = "국가 목록 조회 (지역별 그룹핑)", description = "대륙별로 그룹핑된 국가 목록을 반환합니다.")
+    @Operation(summary = "국가 목록 조회", description = "university 필터링에 사용 가능한 국가 목록을 반환합니다.")
     @GetMapping("/nations")
-    fun getNations(): ResponseEntity<ApiResponse<List<NationsByRegionResponse>>> =
-        ApiResponse.success(metaService.getNationsByRegion())
+    fun getNations(): ResponseEntity<ApiResponse<List<String>>> =
+        ApiResponse.success(metaService.getNations())
+
 
     @Operation(summary = "전공 목록 조회 (카테고리별 그룹핑)", description = "카테고리별로 그룹핑된 전공 목록을 반환합니다.")
     @GetMapping("/majors")

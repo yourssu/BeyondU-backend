@@ -1,9 +1,6 @@
 package org.example.beyondubackend.domain.meta.business
 
-import org.example.beyondubackend.common.enums.KoreanMajor
-import org.example.beyondubackend.common.enums.MajorCategory
-import org.example.beyondubackend.common.enums.Region
-import org.example.beyondubackend.common.enums.SubMajor
+import org.example.beyondubackend.common.enums.*
 import org.example.beyondubackend.domain.meta.application.dto.MajorCategoryResponse
 import org.example.beyondubackend.domain.meta.application.dto.NationsByRegionResponse
 import org.example.beyondubackend.domain.meta.application.dto.SubMajorResponse
@@ -14,6 +11,8 @@ import org.springframework.stereotype.Service
 class MetaServiceImpl(
     private val universityReader: UniversityReader,
 ) : MetaService {
+    override fun getNations(): List<String> = Nation.entries.map { it.displayName }
+
     override fun getNationsByRegion(): List<NationsByRegionResponse> {
         val regionOrder = Region.entries.map { it.displayName }
         return universityReader.getDistinctRegionAndNation()
