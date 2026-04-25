@@ -4,6 +4,8 @@ import org.example.beyondubackend.domain.meta.application.dto.MajorCategoryRespo
 import org.example.beyondubackend.domain.meta.application.dto.NationsByRegionResponse
 
 interface MetaService {
+    fun getNations(): List<String>
+
     fun getNationsByRegion(): List<NationsByRegionResponse>
 
     fun getMajors(): List<MajorCategoryResponse>
