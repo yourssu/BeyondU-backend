@@ -2,6 +2,7 @@ package org.example.beyondubackend.common.enums
 
 enum class Nation(
     val displayName: String,
+    val aliases: Set<String> = emptySet(),
 ) {
     GUATEMALA("과테말라"),
     GREECE("그리스"),
@@ -49,7 +50,7 @@ enum class Nation(
     CANADA("캐나다"),
     COLOMBIA("콜롬비아"),
     CROATIA("크로아티아"),
-    KYRGYZSTAN("키르기스스탄"),
+    KYRGYZSTAN("키르기스스탄", aliases = setOf("키르기즈스탄")),
     THAILAND("태국"),
     TUNISIA("튀니지"),
     TURKEY("튀르키예(터키)"),
@@ -64,7 +65,11 @@ enum class Nation(
     HONG_KONG("홍콩"),
     ;
 
+    val allDbValues: Set<String> get() = setOf(displayName) + aliases
+
     companion object {
         fun fromDisplayName(name: String): Nation? = entries.find { it.displayName == name }
+
+        fun fromAnyName(name: String): Nation? = entries.find { it.displayName == name || name in it.aliases }
     }
 }

@@ -47,8 +47,13 @@ data class  UniversitySearchRequest(
         validateLanguageGroups(languageGroups)
         validateMajors(majors)
 
+        val expandedNations = mergedNations
+            ?.flatMap { name -> Nation.fromAnyName(name)?.allDbValues ?: setOf(name) }
+            ?.distinct()
+            ?.takeIf { it.isNotEmpty() }
+
         return UniversityQuery(
-            nations = mergedNations,
+            nations = expandedNations,
             regions = regions,
             languageGroups = languageGroups,
             isExchange = isExchange,
@@ -64,8 +69,7 @@ data class  UniversitySearchRequest(
 
     private fun validateNations(nations: List<String>?) {
         if (nations.isNullOrEmpty()) return
-        val validNames = Nation.entries.map { it.displayName }.toSet()
-        val invalid = nations.filter { it !in validNames }
+        val invalid = nations.filter { Nation.fromAnyName(it) == null }
         if (invalid.isNotEmpty()) {
             throw BusinessException(ErrorCode.INVALID_INPUT, "유효하지 않은 국가: ${invalid.joinToString()}")
         }
