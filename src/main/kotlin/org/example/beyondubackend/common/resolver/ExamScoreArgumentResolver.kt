@@ -25,17 +25,19 @@ class ExamScoreArgumentResolver : HandlerMethodArgumentResolver {
     ): Map<String, Double> =
         ExamType.entries
             .mapNotNull { examType ->
-                val value = webRequest.getParameter(examType.paramName)?.toDoubleOrNull()
-                if (value != null) {
-                    if (value < examType.minScore || value > examType.maxScore) {
-                        throw BusinessException(
+                val raw = webRequest.getParameter(examType.paramName) ?: return@mapNotNull null
+                val value =
+                    examType.parseQueryValue(raw)
+                        ?: throw BusinessException(
                             ErrorCode.INVALID_EXAM_SCORE,
-                            "${examType.displayName} 점수는 ${examType.minScore} ~ ${examType.maxScore} 범위여야 합니다.",
+                            "${examType.displayName} 유효하지 않은 값: $raw",
                         )
-                    }
-                    examType.displayName to value
-                } else {
-                    null
+                if (value < examType.minScore || value > examType.maxScore) {
+                    throw BusinessException(
+                        ErrorCode.INVALID_EXAM_SCORE,
+                        "${examType.displayName} 점수는 ${examType.minScore} ~ ${examType.maxScore} 범위여야 합니다.",
+                    )
                 }
+                examType.displayName to value
             }.toMap()
 }

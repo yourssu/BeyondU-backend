@@ -22,7 +22,7 @@ class MetaServiceImpl(
             .map { (region, pairs) ->
                 NationsByRegionResponse(
                     region = region,
-                    nations = pairs.map { it[1] },
+                    nations = pairs.map { Nation.fromAnyName(it[1])?.displayName ?: it[1] }.distinct(),
                 )
             }
     }

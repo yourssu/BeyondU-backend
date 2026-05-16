@@ -38,12 +38,14 @@ class UniversityFlowTest {
     // uni3: 미국, GPA 2.5, 방문, 어학 요구사항 없음
     // uni4: 중국, GPA 3.8, 교환, TOEFL iBT 100, 후기 있음
     // uni5: 호주, GPA 2.0, 교환, 어학 요구사항 없음
+    // uni6: 중국, GPA 3.0, 교환, HSK 4급(minScore=4)
 
     private lateinit var uni1: UniversityEntity
     private lateinit var uni2: UniversityEntity
     private lateinit var uni3: UniversityEntity
     private lateinit var uni4: UniversityEntity
     private lateinit var uni5: UniversityEntity
+    private lateinit var uni6: UniversityEntity
 
     @BeforeEach
     fun setUp() {
@@ -122,6 +124,18 @@ class UniversityFlowTest {
                     region = "오세아니아",
                 ),
             )
+        uni6 =
+            universityJpaRepository.save(
+                makeUniversity(
+                    nameKor = "상하이교통대학교",
+                    nameEng = "Shanghai Jiao Tong University",
+                    nation = "중국",
+                    minGpa = 3.0,
+                    isExchange = true,
+                    isVisit = false,
+                    region = "아시아",
+                ),
+            )
 
         languageRequirementJpaRepository.saveAll(
             listOf(
@@ -129,6 +143,7 @@ class UniversityFlowTest {
                 makeLangReq(uni1.id!!, "ENGLISH", "IELTS", 6.0),
                 makeLangReq(uni2.id!!, "JAPANESE", "JLPT", 2.0),
                 makeLangReq(uni4.id!!, "ENGLISH", "TOEFL iBT", 100.0),
+                makeLangReq(uni6.id!!, "CHINESE", "HSK", 4.0),
             ),
         )
     }
@@ -142,30 +157,30 @@ class UniversityFlowTest {
     // ── 전체 조회: 파라미터 없음 ────────────────────────────────────────────
 
     @Test
-    fun `파라미터 없이 전체 조회 시 5개 대학이 모두 반환된다`() {
+    fun `파라미터 없이 전체 조회 시 6개 대학이 모두 반환된다`() {
         val response = get<Map<String, Any?>>(baseUrl)
 
         assertThat(response.statusCode).isEqualTo(HttpStatus.OK)
         val universities = universities(response)
-        assertThat(universities).hasSize(5)
+        assertThat(universities).hasSize(6)
     }
 
     // ── 전체 조회: GPA 필터 ─────────────────────────────────────────────────
 
     @Test
-    fun `GPA 3점 입력 시 minGpa 3점 이하 대학(uni1 uni3 uni5)만 반환된다`() {
+    fun `GPA 3점 입력 시 minGpa 3점 이하 대학(uni1 uni3 uni5 uni6)만 반환된다`() {
         val response = get<Map<String, Any?>>("$baseUrl?gpa=3.0")
 
         val ids = universityIds(response)
-        assertThat(ids).containsExactlyInAnyOrder(uni1.id, uni3.id, uni5.id)
+        assertThat(ids).containsExactlyInAnyOrder(uni1.id, uni3.id, uni5.id, uni6.id)
     }
 
     @Test
-    fun `GPA 3점5 입력 시 minGpa 3점5 이하 대학 4개가 반환된다`() {
+    fun `GPA 3점5 입력 시 minGpa 3점5 이하 대학 5개가 반환된다`() {
         val response = get<Map<String, Any?>>("$baseUrl?gpa=3.5")
 
         val ids = universityIds(response)
-        assertThat(ids).containsExactlyInAnyOrder(uni1.id, uni2.id, uni3.id, uni5.id)
+        assertThat(ids).containsExactlyInAnyOrder(uni1.id, uni2.id, uni3.id, uni5.id, uni6.id)
     }
 
     @Test
@@ -248,7 +263,7 @@ class UniversityFlowTest {
 
     @Test
     fun `Nation enum에 존재하지 않는 국가명 JPN 사용 시 400 에러가 반환된다`() {
-        val response = get<Map<String, Any?>>("$baseUrl?nations=JPN&gpa=4.0&JLPT=2")
+        val response = get<Map<String, Any?>>("$baseUrl?nations=JPN&gpa=4.0&JLPT=N2")
 
         assertThat(response.statusCode).isEqualTo(HttpStatus.BAD_REQUEST)
     }
@@ -256,8 +271,8 @@ class UniversityFlowTest {
     // ── 전체 조회: JLPT 역방향 필터 ────────────────────────────────────────
 
     @Test
-    fun `JLPT N1(레벨1) 보유 시 N2 요구 대학도 지원 가능하다`() {
-        val response = get<Map<String, Any?>>("$baseUrl?JLPT=1")
+    fun `JLPT N1 보유 시 N2 요구 대학도 지원 가능하다`() {
+        val response = get<Map<String, Any?>>("$baseUrl?JLPT=N1")
 
         val ids = universityIds(response)
         // uni2: JLPT N2(minScore=2), DB:2 >= user:1 → 충족
@@ -265,13 +280,41 @@ class UniversityFlowTest {
     }
 
     @Test
-    fun `JLPT N3(레벨3) 보유 시 N2 요구 대학에 지원 불가능하다`() {
-        val response = get<Map<String, Any?>>("$baseUrl?JLPT=3")
+    fun `JLPT N3 보유 시 N2 요구 대학에 지원 불가능하다`() {
+        val response = get<Map<String, Any?>>("$baseUrl?JLPT=N3")
 
         val ids = universityIds(response)
         // uni2: DB:2 >= user:3 → false → 제외
         assertThat(ids).doesNotContain(uni2.id)
         assertThat(ids).containsExactlyInAnyOrder(uni3.id, uni5.id)
+    }
+
+    // ── 전체 조회: HSK enum 필터 ────────────────────────────────────────────
+
+    @Test
+    fun `HSK 4급 보유 시 HSK 4급 요구 대학과 어학 요구사항 없는 대학이 반환된다`() {
+        val response = get<Map<String, Any?>>("$baseUrl?HSK=4급")
+
+        val ids = universityIds(response)
+        // uni6: HSK 4급(minScore=4) 충족, uni3/uni5: 어학 요구사항 없음
+        assertThat(ids).containsExactlyInAnyOrder(uni3.id, uni5.id, uni6.id)
+    }
+
+    @Test
+    fun `HSK 3급 보유 시 HSK 4급 요구 대학에 지원 불가능하다`() {
+        val response = get<Map<String, Any?>>("$baseUrl?HSK=3급")
+
+        val ids = universityIds(response)
+        // uni6: DB minScore(4.0) > user(3.0) → 불충족
+        assertThat(ids).doesNotContain(uni6.id)
+        assertThat(ids).containsExactlyInAnyOrder(uni3.id, uni5.id)
+    }
+
+    @Test
+    fun `HSK 유효하지 않은 값 7급 입력 시 400 에러가 반환된다`() {
+        val response = get<Map<String, Any?>>("$baseUrl?HSK=7급")
+
+        assertThat(response.statusCode).isEqualTo(HttpStatus.BAD_REQUEST)
     }
 
     // ── 전체 조회: 기타 단독 필터 ──────────────────────────────────────────
@@ -289,7 +332,7 @@ class UniversityFlowTest {
         val response = get<Map<String, Any?>>("$baseUrl?isExchange=true")
 
         val ids = universityIds(response)
-        assertThat(ids).containsExactlyInAnyOrder(uni1.id, uni2.id, uni4.id, uni5.id)
+        assertThat(ids).containsExactlyInAnyOrder(uni1.id, uni2.id, uni4.id, uni5.id, uni6.id)
         assertThat(ids).doesNotContain(uni3.id)
     }
 
@@ -356,7 +399,7 @@ class UniversityFlowTest {
         val universities = result["universities"] as List<*>
         val pageInfo = result["pageInfo"] as Map<*, *>
         assertThat(universities).hasSize(2)
-        assertThat(pageInfo["totalElements"]).isEqualTo(5)
+        assertThat(pageInfo["totalElements"]).isEqualTo(6)
         assertThat(pageInfo["isLast"]).isEqualTo(false)
     }
 
@@ -379,8 +422,8 @@ class UniversityFlowTest {
     }
 
     @Test
-    fun `JLPT 레벨이 5 초과이면 400 에러가 반환된다`() {
-        val response = get<Map<String, Any?>>("$baseUrl?JLPT=6")
+    fun `JLPT 유효하지 않은 값 N6 입력 시 400 에러가 반환된다`() {
+        val response = get<Map<String, Any?>>("$baseUrl?JLPT=N6")
 
         assertThat(response.statusCode).isEqualTo(HttpStatus.BAD_REQUEST)
     }
@@ -518,7 +561,7 @@ class UniversityFlowTest {
         val response = get<Map<String, Any?>>("$baseUrl?regions=아시아")
 
         val ids = universityIds(response)
-        assertThat(ids).containsExactlyInAnyOrder(uni2.id, uni4.id)
+        assertThat(ids).containsExactlyInAnyOrder(uni2.id, uni4.id, uni6.id)
     }
 
     @Test
@@ -526,7 +569,7 @@ class UniversityFlowTest {
         val response = get<Map<String, Any?>>("$baseUrl?regions=아시아&regions=오세아니아")
 
         val ids = universityIds(response)
-        assertThat(ids).containsExactlyInAnyOrder(uni2.id, uni4.id, uni5.id)
+        assertThat(ids).containsExactlyInAnyOrder(uni2.id, uni4.id, uni5.id, uni6.id)
     }
 
     // ── 전체 조회: 언어권 필터 (#37) ────────────────────────────────────────

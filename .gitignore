@@ -38,3 +38,11 @@ out/
 
 ### Kotlin ###
 .kotlin
+
+
+### Custom ###
+.env
+/img/
+.claude/
+CLAUDE.md
+nul
