@@ -17,9 +17,10 @@ interface UniversityRepository {
         hasReview: Boolean?,
         examScores: Map<String, Double>,
         pageable: Pageable,
+        currentSemester: String,
     ): Page<University>
 
     fun findById(id: Long): University?
 
-    fun findDistinctRegionAndNation(): List<Array<String>>
+    fun findDistinctRegionAndNation(currentSemester: String): List<Array<String>>
 }

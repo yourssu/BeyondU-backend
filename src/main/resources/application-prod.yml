@@ -16,6 +16,9 @@ spring:
         format_sql: true
         highlight_sql: true
 
+app:
+  current-semester: "2026-2"
+
 logging:
   level:
     root: INFO

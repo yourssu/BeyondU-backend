@@ -9,7 +9,6 @@ import org.example.beyondubackend.domain.university.implement.UniversityReposito
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.BDDMockito.given
-import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoExtension
 
@@ -21,11 +20,9 @@ class UniversityReaderTest {
     @Mock
     private lateinit var languageRequirementJpaRepository: LanguageRequirementJpaRepository
 
-    @InjectMocks
-    private lateinit var universityReader: UniversityReader
-
     @Test
     fun `존재하지 않는 ID로 조회 시 UNIVERSITY_NOT_FOUND BusinessException이 발생한다`() {
+        val universityReader = UniversityReader(universityRepository, "2026-2")
         given(universityRepository.findById(999L)).willReturn(null)
 
         assertThatThrownBy { universityReader.getUniversityById(999L) }
@@ -35,6 +32,7 @@ class UniversityReaderTest {
 
     @Test
     fun `존재하는 ID로 조회 시 University 도메인 객체가 반환된다`() {
+        val universityReader = UniversityReader(universityRepository, "2026-2")
         val university =
             org.example.beyondubackend.domain.university.implement.University(
                 id = 1L,

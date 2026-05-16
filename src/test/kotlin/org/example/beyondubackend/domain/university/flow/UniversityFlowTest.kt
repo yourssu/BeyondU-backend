@@ -521,6 +521,73 @@ class UniversityFlowTest {
         assertThat(response.statusCode).isEqualTo(HttpStatus.NOT_FOUND)
     }
 
+    // ── 전체 조회: semester 필터링 ──────────────────────────────────────────
+
+    @Test
+    fun `현재 학기와 다른 semester 데이터는 조회되지 않는다`() {
+        // Arrange: 다른 학기 데이터 추가
+        val futureUniversity =
+            universityJpaRepository.save(
+                makeUniversity(
+                    nameKor = "미래대학교",
+                    nameEng = "Future University",
+                    nation = "미국",
+                    semester = "2025-1",
+                ),
+            )
+
+        // Act
+        val response = get<Map<String, Any?>>(baseUrl)
+
+        // Assert: 현재 학기(2024-1) 데이터만 반환되고 미래 학기(2025-1)는 제외
+        val ids = universityIds(response)
+        assertThat(ids).containsExactlyInAnyOrder(uni1.id, uni2.id, uni3.id, uni4.id, uni5.id, uni6.id)
+        assertThat(ids).doesNotContain(futureUniversity.id)
+    }
+
+    @Test
+    fun `과거 학기 데이터도 현재 학기로 설정된 경우에만 반환된다`() {
+        // Arrange: 과거 학기 데이터 추가
+        val pastUniversity =
+            universityJpaRepository.save(
+                makeUniversity(
+                    nameKor = "과거대학교",
+                    nameEng = "Past University",
+                    nation = "일본",
+                    semester = "2023-2",
+                ),
+            )
+
+        // Act
+        val response = get<Map<String, Any?>>(baseUrl)
+
+        // Assert: 현재 학기(2024-1) 데이터만 반환되고 과거 학기(2023-2)는 제외
+        val ids = universityIds(response)
+        assertThat(ids).containsExactlyInAnyOrder(uni1.id, uni2.id, uni3.id, uni4.id, uni5.id, uni6.id)
+        assertThat(ids).doesNotContain(pastUniversity.id)
+    }
+
+    @Test
+    fun `GPA 필터와 함께 semester도 정확히 필터링된다`() {
+        // Arrange: 다른 학기에 GPA 3.0 대학 추가
+        universityJpaRepository.save(
+            makeUniversity(
+                nameKor = "다른학기대학",
+                nameEng = "Other Semester University",
+                nation = "중국",
+                minGpa = 3.0,
+                semester = "2025-1",
+            ),
+        )
+
+        // Act
+        val response = get<Map<String, Any?>>("$baseUrl?gpa=3.0")
+
+        // Assert: GPA 필터와 semester 모두 적용됨
+        val ids = universityIds(response)
+        assertThat(ids).containsExactlyInAnyOrder(uni1.id, uni3.id, uni5.id, uni6.id)
+    }
+
     // ── 전체 조회: nations 복수 OR 조건 (#37) ──────────────────────────────
 
     @Test
@@ -631,8 +698,9 @@ class UniversityFlowTest {
         availableSubject: String? = null,
         location: String? = null,
         studentCount: String? = null,
+        semester: String = "2026-2",
     ) = UniversityEntity(
-        semester = "2024-1",
+        semester = semester,
         region = region,
         nation = nation,
         nameKor = nameKor,

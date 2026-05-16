@@ -32,6 +32,7 @@ class UniversityRepositoryImpl(
         hasReview: Boolean?,
         examScores: Map<String, Double>,
         pageable: Pageable,
+        currentSemester: String,
     ): Page<University> {
         val query =
             queryFactory
@@ -48,6 +49,7 @@ class UniversityRepositoryImpl(
                     majorsContains(majors),
                     hasReviewEq(hasReview),
                     examScoresMatch(examScores),
+                    semesterEq(currentSemester),
                 ).offset(pageable.offset)
                 .limit(pageable.pageSize.toLong())
 
@@ -85,6 +87,7 @@ class UniversityRepositoryImpl(
                     majorsContains(majors),
                     hasReviewEq(hasReview),
                     examScoresMatch(examScores),
+                    semesterEq(currentSemester),
                 ).fetchOne() ?: 0L
 
         return PageImpl(content, pageable, total)
@@ -92,7 +95,7 @@ class UniversityRepositoryImpl(
 
     override fun findById(id: Long): University? = universityJpaRepository.findById(id).orElse(null)?.toDomain()
 
-    override fun findDistinctRegionAndNation(): List<Array<String>> = universityJpaRepository.findDistinctRegionAndNation()
+    override fun findDistinctRegionAndNation(currentSemester: String): List<Array<String>> = universityJpaRepository.findDistinctRegionAndNation(currentSemester)
 
     private fun nationsIn(nations: List<String>?): BooleanExpression? =
         nations
@@ -184,4 +187,6 @@ class UniversityRepositoryImpl(
         // 둘 중 하나라도 true면 조회 가능
         return hasMatchingRequirement.or(hasNoRequirement)
     }
+
+    private fun semesterEq(semester: String): BooleanExpression = universityEntity.semester.eq(semester)
 }

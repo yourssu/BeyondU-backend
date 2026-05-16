@@ -2,6 +2,7 @@ package org.example.beyondubackend.domain.university.implement
 
 import org.example.beyondubackend.common.code.ErrorCode
 import org.example.beyondubackend.common.exception.BusinessException
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Component
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Component
 @Component
 class UniversityReader(
     private val universityRepository: UniversityRepository,
+    @Value("\${app.current-semester}") private val currentSemester: String,
 ) {
     fun getUniversitiesWithFilters(
         nations: List<String>?,
@@ -37,11 +39,12 @@ class UniversityReader(
             hasReview,
             examScores,
             pageable,
+            currentSemester,
         )
 
     fun getUniversityById(id: Long): University =
         universityRepository.findById(id)
             ?: throw BusinessException(ErrorCode.UNIVERSITY_NOT_FOUND)
 
-    fun getDistinctRegionAndNation(): List<Array<String>> = universityRepository.findDistinctRegionAndNation()
+    fun getDistinctRegionAndNation(): List<Array<String>> = universityRepository.findDistinctRegionAndNation(currentSemester)
 }
