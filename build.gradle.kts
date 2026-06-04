@@ -42,7 +42,9 @@ dependencies {
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     runtimeOnly("com.h2database:h2")
     implementation("org.xerial:sqlite-jdbc")
-    
+    runtimeOnly("org.xerial:sqlite-jdbc:3.46.0.0")
+
+    implementation("org.hibernate.orm:hibernate-community-dialects")
 }
 
 kotlin {

@@ -5,9 +5,10 @@ spring:
     # password: ${DB_PASSWORD_LOCAL}
     driver-class-name: org.sqlite.JDBC
   jpa:
-    database-platform:
+    database-platform: org.hibernate.community.dialect.SQLiteDialect
     hibernate:
       ddl-auto: update
+      dialect: org.hibernate.community.dialect.SQLiteDialect
     show-sql: true
     properties:
       hibernate:
